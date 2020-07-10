@@ -1,0 +1,27 @@
+{
+  "name": "@classroomtechtools/endpoints",
+  "version": "1.0.0",
+  "description": "A library SDK for Google AppsScripts that makes working with public APIs a cinch.",
+  "main": "Endpoints.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/classroomtechtools/Endpoints.git"
+  },
+  "keywords": [
+    "appsscripts",
+    "google",
+    "apis"
+  ],
+  "author": "Adam Morris <classroomtechtools.ctt@gmail.com> (https://classroomtechtools.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/classroomtechtools/Endpoints/issues"
+  },
+  "homepage": "https://github.com/classroomtechtools/Endpoints#readme"
+}

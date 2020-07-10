@@ -1,0 +1,45 @@
+{
+  "name": "endpoints",
+  "version": "1.0.0",
+  "repository": "https://github.com/classroomtechtools/Endpoints",
+  "license": {
+    "type": "MIT",
+    "url": "https://spdx.org/licenses/MIT.html"
+  },
+  "ava": {
+    "verbose": true
+  },
+  "author": "Adam Morris <classroomtechtools.ctt@gmail.com> (http://classroomtechtools.com/)",
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "start": "sirv build/svelte",
+    "deploy": "run-s bundle clasp:push",
+    "bundle": "run-s rm-artifacts build static generate",
+    "rm-artifacts": "rm -fr ./project/*",
+    "static": "cp ./src/static/* ./build/staging/",
+    "generate": "run-p generate:*",
+    "generate:remote": "cp -r ./src/scripts/* ./project/",
+    "clasp:create": "clasp create --rootDir ./project",
+    "clasp:login": "clasp login",
+    "clasp:logout": "clasp logout",
+    "clasp:logs": "clasp logs",
+    "clasp:push": "clasp push",
+    "clasp:tests": "clasp run tests"
+  },
+  "devDependencies": {
+    "@google/clasp": "^2.3.0",
+    "@rollup/plugin-commonjs": "^12.0.0",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-multi-entry": "^3.0.1",
+    "@rollup/plugin-node-resolve": "^8.1.0",
+    "npm-run-all": "^4.1.5",
+    "rollup": "^2.19.0",
+    "rollup-plugin-hypothetical": "^2.1.0",
+    "ava": "^3.10.0"
+  },
+  "keywords": [
+    "google",
+    "appscripts"
+  ]
+}
