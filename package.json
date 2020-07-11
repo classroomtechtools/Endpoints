@@ -9,7 +9,8 @@
     "url": "https://spdx.org/licenses/MIT.html"
   },
   "ava": {
-    "verbose": true
+    "verbose": true,
+    "files": ["tests/**/*", "!tests/serverside"]
   },
   "author": "Adam Morris <classroomtechtools.ctt@gmail.com> (http://classroomtechtools.com/)",
   "scripts": {
@@ -31,6 +32,7 @@
     "clasp:tests": "clasp run tests"
   },
   "devDependencies": {
+    "@classroomtechtools/unittesting": "^1.5.1",
     "@google/clasp": "^2.3.0",
     "@rollup/plugin-commonjs": "^12.0.0",
     "@rollup/plugin-json": "^4.1.0",
@@ -46,7 +48,6 @@
     "appscripts"
   ],
   "dependencies": {
-    "@classroomtechtools/enforce_arguments": "^1.0.1",
-    "@classroomtechtools/unittesting": "^1.5.1"
+    "@classroomtechtools/enforce_arguments": "^1.0.1"
   }
 }
