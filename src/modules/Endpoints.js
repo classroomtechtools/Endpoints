@@ -679,5 +679,5 @@ class EndpointsBase {
 
 }
 
-const EndpointsLib = {EndpointsBase, Response, Batch, Endpoint, Request};
+const EndpointsLib = {EndpointsBase, Response, Batch, Request};
 export {EndpointsLib};

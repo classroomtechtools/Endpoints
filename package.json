@@ -1,7 +1,9 @@
 {
-  "name": "endpoints",
+  "name": "@classroomtechtools/endpoints",
   "version": "1.0.0",
   "repository": "https://github.com/classroomtechtools/Endpoints",
+  "main": "src/modules/Endpoints.js",
+  "type": "module",
   "license": {
     "type": "MIT",
     "url": "https://spdx.org/licenses/MIT.html"
@@ -14,6 +16,7 @@
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "start": "sirv build/svelte",
+    "test": "ava",
     "deploy": "run-s bundle clasp:push",
     "bundle": "run-s rm-artifacts build static generate",
     "rm-artifacts": "rm -fr ./project/*",
@@ -41,5 +44,9 @@
   "keywords": [
     "google",
     "appscripts"
-  ]
+  ],
+  "dependencies": {
+    "@classroomtechtools/enforce_arguments": "^1.0.1",
+    "@classroomtechtools/unittesting": "^1.5.1"
+  }
 }
