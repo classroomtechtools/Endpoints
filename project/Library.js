@@ -2,9 +2,9 @@
 // setting to true will use "me" as value in initiation (which will use ScriptApp.getOAuthToken)
 let OAUTH = false;
 function E_() {
-  const { Endpoints } = Import;
-  if (!OAUTH) return new Endpoints.EndpointsBase();
-  return new Endpoints.EndpointsBase({oauth: 'me'});
+  const { EndpointsLib } = Import;
+  if (!OAUTH) return new EndpointsLib.EndpointsBase();
+  return new EndpointsLib.EndpointsBase({oauth: 'me'});
 }
 
 
@@ -344,8 +344,8 @@ function response_getJson (response) {
    * @alias response.getJson()
    * @alias response.json
    */
-  const {Enforce} = Import;
-  Enforce.positional(arguments, {response: Response_}, 'Response.json');
+  const {Enforce, EndpointsLib} = Import;
+  Enforce.positional(arguments, {response: EndpointsLib.Response}, 'Response.json');
   return response.getJson();
 }
 
@@ -361,8 +361,8 @@ function response_isOk (response) {
    * @alias response.isOk()
    * @alias response.ok
    */
-  const {Enforce} = Import;
-  Enforce.positional(arguments, {response: Response_}, 'Response.isOkay');
+  const {Enforce, EndpointsLib} = Import;
+  Enforce.positional(arguments, {response: EndpointsLib.Response}, 'Response.isOkay');
   return response.isOk();
 }
 
@@ -378,8 +378,8 @@ function response_getStatusCode (response) {
    * @alias response.getStatusCode()
    * @alias response.statusCode
    */
-  const {Enforce} = Import;
-  Enforce.positional(arguments, {response: Response_}, 'Response.statusCode');
+  const {Enforce, EndpointsLib} = Import;
+  Enforce.positional(arguments, {response: EndpointsLib.Response}, 'Response.statusCode');
   return response.getStatusCode();
 }
 
@@ -394,8 +394,8 @@ function response_getRequestObject (response) {
    * @alias response.getRequestObject()
    * @alias response.requestObject
    */
-  const {Enforce} = Import;
-  Enforce.positional(arguments, {response: Response_}, 'Response.getRequest');
+  const {Enforce, EndpointsLib} = Import;
+  Enforce.positional(arguments, {response: EndpointsLib.Response}, 'Response.getRequest');
   return response.requestObject;
 }
 
@@ -410,8 +410,8 @@ function response_getHeaders (response) {
    * @alias response.getHeaders()
    * @alias response.headers
    */
-  const {Enforce} = Import;
-  Enforce.positional(arguments, {response: Response_}, 'Response.getHeaders');
+  const {Enforce, EndpointsLib} = Import;
+  Enforce.positional(arguments, {response: EndpointsLib.Response}, 'Response.getHeaders');
   return response.headers;
 }
 
