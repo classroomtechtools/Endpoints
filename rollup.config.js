@@ -12,18 +12,18 @@ export default [{
 		format: 'cjs',
 		file: './project/Bundle.js',
 		banner: '/* Bundle as defined from all files in src/modules/*.js */\nconst Import = Object.create(null);\n',
-		intro: '(function (exports, window) {',
+		intro: '(function (exports, window) {\n// provide global (danger zone)\nexports.__window = window;',
 		outro: '})(Import, this);\ntry{exports.Import = Import;}catch(e){}'
 	},
 	plugins
 }, {
-	input: ['tests/remote/*.js'],
+	input: ['src/tests/*.js'],
 	treeshake: true,
 	output: {
 		format: 'iife',
 		file: './project/TestBundle.js',
 		banner: '/* Bundle as defined from all files in tests/serverside/*.js */\nfunction Test(remote=true) {\n',
-		footer: 'try { return Log.get() } catch (e) {} }'
+		footer: 'try { return Log.get() } catch (e) {} \n}'
 	},
 	plugins
 }];

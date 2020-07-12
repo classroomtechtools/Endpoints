@@ -1,3 +1,4 @@
+import {Enforce} from '@classroomtechtools/enforce_arguments';
 import {OAuth2} from './lib/Oauth2.js';
 
 /**
@@ -29,7 +30,6 @@ class Batch {
      * Add request to batch queue
      * @param {Request} request - An Endpoints.Request object
      */
-    const {Enforce, EndpointsLib} = Import;
     Enforce.named(arguments, {request: EndpointsLib.Request}, 'Batch#add');
     const [_, obj] = request.url_params({embedUrl: true});
     this.queue.push(obj);
@@ -45,11 +45,10 @@ class Batch {
      * @example Make list of original request urls
      *          batch.fetchAll().map(response => response.request.url);
      */
-    const {Enforce, EndpointsLib} = Import;
     return UrlFetchApp.fetchAll(this.queue).map( (response, idx) => {
                                                 // NOTE: requestObject is just a regular object
       const requestObject = this.queue[idx];
-      return new EndpointsLib.Response({response, requestObject});
+      return new Response({response, requestObject});
     });
   }
 }
@@ -673,11 +672,11 @@ class EndpointsBase {
 
   static batchRequests ({...kwargs}={}) {
     const b = new Batch();
-    const r = new EndpointsBase(kwargs)
+    const r = new EndpointsBase(kwargs);
     return [b, r];
   }
 
 }
-
 const EndpointsLib = {EndpointsBase, Response, Batch, Request};
 export {EndpointsLib};
+

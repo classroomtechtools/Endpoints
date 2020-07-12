@@ -863,6 +863,8 @@ function Test(remote=true) {
   const it = assert.it;
 
   function Log () {
+      const window = Import.__window;  // ugh
+
       if (Object.hasOwnProperty(window.Logger, 'get')) return;
 
       class log {
@@ -878,7 +880,7 @@ function Test(remote=true) {
               this._log.join("\n");
           }
       }
-      window.Logger = log();
+      window.Logger = new log();
   }
   Log.get = function () {
       return Object.hasOwnProperty(window.Logger, 'get') ? window.Logger.get() : null;
@@ -1274,4 +1276,5 @@ function Test(remote=true) {
   })();
 
 }());
-try { return Log.get() } catch (e) {} }
+try { return Log.get() } catch (e) {} 
+}

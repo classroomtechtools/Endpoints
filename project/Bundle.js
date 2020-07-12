@@ -4,6 +4,8 @@ const Import = Object.create(null);
 'use strict';
 
 (function (exports, window) {
+// provide global (danger zone)
+exports.__window = window;
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
@@ -202,7 +204,7 @@ function positional (args, parameters, comment) {
   return him.enforcePositional(args);
 }
 
-const Enforce$1 = {create, named, positional};
+const Enforce = {create, named, positional};
 
 // Copyright 2014 Google Inc. All Rights Reserved.
 //
@@ -1331,7 +1333,6 @@ class Batch {
      * Add request to batch queue
      * @param {Request} request - An Endpoints.Request object
      */
-    const {Enforce, EndpointsLib} = Import;
     Enforce.named(arguments, {request: EndpointsLib.Request}, 'Batch#add');
     const [_, obj] = request.url_params({embedUrl: true});
     this.queue.push(obj);
@@ -1347,11 +1348,10 @@ class Batch {
      * @example Make list of original request urls
      *          batch.fetchAll().map(response => response.request.url);
      */
-    const {Enforce, EndpointsLib} = Import;
     return UrlFetchApp.fetchAll(this.queue).map( (response, idx) => {
                                                 // NOTE: requestObject is just a regular object
       const requestObject = this.queue[idx];
-      return new EndpointsLib.Response({response, requestObject});
+      return new Response({response, requestObject});
     });
   }
 }
@@ -1980,33 +1980,10 @@ class EndpointsBase {
   }
 
 }
-
 const EndpointsLib = {EndpointsBase, Response, Batch, Request};
 
-function Log () {
-
-    class log {
-        constructor () {
-            this._log = [];
-        }
-
-        log (...params) {
-            this._log.push(params.join(""));
-        }
-
-        get () {
-            this._log.join("\n");
-        }
-    }
-    window.Logger = log();
-}
-Log.get = function () {
-    return Object.hasOwnProperty(window.Logger, 'get') ? window.Logger.get() : null;
-};
-
 exports.EndpointsLib = EndpointsLib;
-exports.Enforce = Enforce$1;
-exports.Log = Log;
+exports.Enforce = Enforce;
 
 })(Import, this);
 try{exports.Import = Import;}catch(e){}

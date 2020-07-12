@@ -1,4 +1,6 @@
 function Log () {
+    const window = Import.__window;  // ugh
+
     if (Object.hasOwnProperty(window.Logger, 'get')) return;
 
     class log {
@@ -14,7 +16,7 @@ function Log () {
             this._log.join("\n")
         }
     }
-    window.Logger = log();
+    window.Logger = new log();
 }
 Log.get = function () {
     return Object.hasOwnProperty(window.Logger, 'get') ? window.Logger.get() : null;

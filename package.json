@@ -10,7 +10,7 @@
   },
   "ava": {
     "verbose": true,
-    "files": ["tests/**/*", "!tests/serverside"]
+    "files": ["tests/*"]
   },
   "author": "Adam Morris <classroomtechtools.ctt@gmail.com> (http://classroomtechtools.com/)",
   "scripts": {
@@ -28,7 +28,7 @@
     "clasp:login": "clasp login",
     "clasp:logout": "clasp logout",
     "clasp:logs": "clasp logs",
-    "clasp:push": "clasp push",
+    "clasp:push": "npm run bundle && clasp push",
     "clasp:tests": "clasp run tests"
   },
   "devDependencies": {

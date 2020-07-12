@@ -636,3 +636,4 @@ function $_interpolate (baseUrlString, pathParameters) {
 function __mocklib() {
   return {Response, $, Batch, Endpoint, Request, Options};
 }
+          try {exports.Endpoints = __mocklib()} catch (e) {}
