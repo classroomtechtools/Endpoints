@@ -2,6 +2,21 @@
 
 A library SDK for Google AppsScripts that makes working with public APIs a cinch.
 
+## Quickstart
+
+### To use as a library as an AppsScripts library
+
+Project ID: `MOwaCM3sJzFttpUe7GAFibvD8R0iiSsw_`
+
+### To import as an npm module:
+
+`npm install @classroomtechtools/endpoints`
+
+The above will also install the following dependencies:
+
+- @classroomtechtools/unittesting
+- @classroomtechtools/enforce_arguments
+
 ## Tour
 
 The library uses namespaces to organize itself:
@@ -28,10 +43,10 @@ Logger.log(url1 === url2);  // true
 
 Methods that start with `get` indicate that there is a property on the object which can be immediately accessed.
 
-Curious to read more about what all the various methods actually do? You can read the source code, or you can do so via the online editor with `Endpoints.$.doc`:
+Curious to read more about what all the various methods actually do? You can read the source code, or you can do so via the online editor with `Endpoints.$.jdoc`:
 
 ```js
-const doc = Endpoints.$.doc(request.getUrl);
+const doc = Endpoints.$.jdoc(request.getUrl);
 Logger.log(doc);
 ```
 
@@ -97,7 +112,7 @@ Imagine your application needs to write the exact same information to two differ
 We need to create an `Endpoint` object, instead of directly creating a `Request` object as we did before, which will then be used to build the needed `Request` object. First we need to get an endpoint object intended to be used with Google APIs, which we can do via `Endpoints.$.createGoogEndpoint`. Let's learn what it does:
 
 ```js
-const doc = Endpoints.$.doc(Endpoints.$.createGoogEndpoint);
+const doc = Endpoints.$.jdoc(Endpoints.$.createGoogEndpoint);
 Logger.log(doc);
 ```
 
