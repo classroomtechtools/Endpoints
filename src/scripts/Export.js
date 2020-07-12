@@ -485,7 +485,7 @@ function $ () {
    */
   return Endpoints.EndpointsBase;
 }
-$.doc = $_doc;
+$.jdoc = $_jdoc;
 $.initBatch = $_initBatch;
 $.createGetRequest = $_createGetRequest;
 $.createGoogEndpoint = $_createGoogEndpoint;
@@ -499,11 +499,11 @@ $.interpoloate = $_interpolate;
  * @param {Function} func
  * @return {String}
  */
-function $_doc (func) {
+function $_jdoc (func) {
   /**
    * Returns the "docstring" which is the comment following the function declaration
    */
-  if (!(typeof func ==='function')) throw new TypeError('$_doc requires a function as an object');
+  if (!(typeof func ==='function')) throw new TypeError('$_jdoc requires a function as an object');
   return func.doc;
 }
 
