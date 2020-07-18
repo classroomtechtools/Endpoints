@@ -10,7 +10,9 @@
   },
   "ava": {
     "verbose": true,
-    "files": ["tests/*"]
+    "files": [
+      "tests/*"
+    ]
   },
   "author": "Adam Morris <classroomtechtools.ctt@gmail.com> (http://classroomtechtools.com/)",
   "scripts": {
@@ -48,6 +50,6 @@
     "appscripts"
   ],
   "dependencies": {
-    "@classroomtechtools/enforce_arguments": "^1.0.1"
+    "@classroomtechtools/enforce_arguments": "^1.0.3"
   }
 }

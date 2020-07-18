@@ -21,7 +21,13 @@ Object.defineProperty(exports, '__esModule', { value: true });
  */
 
 function throwError_(message) {
-   throw new TypeError(message);
+   try {
+     throw new Error();
+   } catch (e) {
+     const stack = e.stack.split(' at ').slice(5).join(' at ');
+     throw new TypeError(message + ': ' + stack);
+   }
+
 }
 
 class Enforce_ {
@@ -59,12 +65,12 @@ class Enforce_ {
   }
 
   get req() {
-    throw Error(`${this.name} is missing a required argument`);
+    throwError_(`${this.name} is missing a required argument`);
   }
 
   extra(kwargs) {
     if (Object.entries(kwargs).length > 0)
-      throw Error(`Unknown parameter(s) passed to ${this.name}: ${Object.keys(kwargs)}`);
+      throwError_(`Unknown parameter(s) passed to ${this.name}: ${Object.keys(kwargs)}`);
   }
 
   enforceRequiredParams (passed) {
@@ -94,7 +100,7 @@ class Enforce_ {
      * This works because javascript objects, as long as all of the keys are non-numerical (which we can assume)
      *   retain the order by insertion
      */
-    if (args === undefined) throwError_('Pass "arguments" to enforcePositional');
+    if (args === undefined) throwError_('Pass "arguments" to  enforcePositional');
     const keys = Object.keys(this.params);
 
     // convert positional to required format by typecheck
@@ -123,7 +129,7 @@ class Enforce_ {
     for (const prop in this.params) {
       if (!argObj.hasOwnProperty(prop)) continue;
       const av = argObj[prop], klass = this.params[prop];  // actual value, klass (either passed directly or converted from instance)
-      if (klass === null) continue;       // ensure all null values are not subject to checks
+      if (klass === null || av == null) continue;       // ensure all null values are not subject to checks
       if (av === undefined) {
         if (checkUndefined) throwError_(`"undefined" was passed to ${this.name} for ${prop}`);
         continue;
@@ -205,6 +211,9 @@ function positional (args, parameters, comment) {
 }
 
 const Enforce = {create, named, positional};
+
+// install it globally if window global is available
+try {window.Enforce = Enforce;} catch (e) {}
 
 // Copyright 2014 Google Inc. All Rights Reserved.
 //
