@@ -1416,30 +1416,6 @@ class DiscoveryCache {
 
 }
 
-/*
- * Throw error if property of a class does not exist; helps with development
- */
-function KlassProxy (klass) {
-  return new Proxy(klass, {
-    get(target, prop) {
-      if (prop in target) {
-        return target[prop];
-      } else {
-        let stack_message;
-        try {
-          throw new Error();
-        } catch (e) {
-          stack_message = e.stack;
-        }
-        Logger.log(stack_message);
-        const message = `No method or property "${prop}" in class ${klass.constructor.name} ${stack_message}`;
-        Logger.log(message);
-        throw new Error(message);
-      }
-    }
-  });
-}
-
 
     /**
  * Class that fills in EndpointsBase.utils namespace
@@ -1473,8 +1449,8 @@ class Utils {
      * Used internally; required since Google APIs use former pattern instead of latter
      */
     // Use special patterns available in second parameter go from a {} to ${}
-    return string.replace(/{\+*([a-zA-Z_.]*?)}/g, function (one) {
-      return '$' + one.replace('.', '_');
+    return string.replace(/{\+*([a-zA-Z_.]*?)}/g, function (one, two) {
+      return '${' + two.replace('.', '_') + '}';
     });
   }
 
@@ -1502,6 +1478,7 @@ class Utils {
   }
 }
 
+const PRIVATE_OAUTH = Symbol('private_oauth');
 
 class Request {
   /*
@@ -1517,10 +1494,9 @@ class Request {
     this.query = query;
     // standard parameters is quite useful for performance, use is specially
     this._fields = [];
-    this.oauth = oauth;
+    this[PRIVATE_OAUTH] = oauth;
 
     if (mixin) Object.assign(this, mixin);
-    return KlassProxy(this);
   }
 
   fetch () {
@@ -1621,14 +1597,14 @@ class Request {
     // we'll derive the oauth token upon request, if applicable, here
     // keep backward compatible with Oauth2 lib
 
-    if (this.oauth) {
+    if (this[PRIVATE_OAUTH]) {
 
       const token = (_ => {
-        if (this.oauth.hasAccess) {
+        if (this[PRIVATE_OAUTH].hasAccess) {
           // if our oauth has a method "hasAccess" we know it's using the Oauth lib
-          if (this.oauth.hasAccess()) {
+          if (this[PRIVATE_OAUTH].hasAccess()) {
             // return the access token (usually the case will do so)
-            return this.oauth.getAccessToken();
+            return this[PRIVATE_OAUTH].getAccessToken();
           }
           // return null if Oauth lib reports no access (in some cases may have problems)
           return null;
@@ -1636,7 +1612,7 @@ class Request {
 
         // here oauth is an object (class instance) with token property
         // return that, or null if not present or empty
-        return this.oauth.token || null;
+        return this[PRIVATE_OAUTH].token || null;
       })();
       if (token==null) throw new Error("No authorization");
       this.headers['Authorization'] = `Bearer ${token}`;
@@ -1661,13 +1637,6 @@ class Request {
     return
   }
 
-  resolve () {
-    /**
-     * Convenience shortcut for fetch().json
-     */
-    return this.fetch().json;
-  }
-
 }
 
 
@@ -1687,7 +1656,6 @@ class Response {
     // By default, if response cannot be parsed to json we'll send back a json with error information
     // instead of throwing error
     this.catchUnparseableJsonResponse = true;
-    return KlassProxy(this);
   }
 
   getText () {
@@ -1852,8 +1820,6 @@ class EndpointsBase {
       }
       this.oauth = new OAUTH();
     }
-
-    return KlassProxy(this);
   }
 
   getBaseUrl () {

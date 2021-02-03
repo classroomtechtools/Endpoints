@@ -1077,12 +1077,9 @@ function Test(remote=true) {
     });
   })();
 
-  if (remote) Log();
-
   (function longform() {
     // mimic how to use it in library context
     const Endpoints = __mocklib();
-    const startTime = new Date().getTime();
 
     describe("interacting incorrectly with endpoint that produces 404", _ => {
       const endpoint = Endpoints.$.createGoogEndpoint('sheets', 'v4', 'spreadsheets', 'get');

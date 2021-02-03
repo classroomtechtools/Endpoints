@@ -7,7 +7,6 @@ function E_() {
   return new EndpointsLib.EndpointsBase({oauth: 'me'});
 }
 
-
 /**
  * @name Endpoint-
  * @return {NAMESPACE}
