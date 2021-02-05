@@ -1,11 +1,12 @@
 # Endpoints
 
-A library SDK for Google AppsScripts that makes working with public APIs a cinch.
+A library SDK for Google AppsScripts that makes working with google and public APIs a cinch.
 
 ## Quickstart
 
 ### To use as a library as an AppsScripts library
 
+Library ID: `1WovLPVqVjZxkxkgCNgI3S_A3eDsX3DWOAoetZgRGW1JpGQ_9TK25y7mB`
 Project ID: `MOwaCM3sJzFttpUe7GAFibvD8R0iiSsw_`
 
 ### To import as an npm module:
