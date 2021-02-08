@@ -200,7 +200,14 @@ class Request {
       response = null;
       throw new Error(e.message, {url, requestObject});
     }
-    const resp = new Response({response, requestObject});
+    let resp = new Response({response, requestObject});
+
+    // auto-detect ratelimits, try again
+    if (resp.hitRateLimit) {
+      response = UrlFetchApp.fetch(url, requestObject);
+      resp = new Response({response, requestObject});
+    }
+
     return resp;
   }
 
