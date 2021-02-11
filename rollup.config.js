@@ -10,7 +10,7 @@ export default [{
 	treeshake: true,
 	output: {
 		format: 'cjs',
-		file: './project/Bundle.js',
+		file: './build/Bundle.js',
 		banner: '/* Bundle as defined from all files in src/modules/*.js */\nconst Import = Object.create(null);\n',
 		intro: '(function (exports, window) {\n// provide global (danger zone)\nexports.__window = window;',
 		outro: '})(Import, this);\ntry{exports.Import = Import;}catch(e){}'
@@ -21,8 +21,8 @@ export default [{
 	treeshake: true,
 	output: {
 		format: 'iife',
-		file: './project/TestBundle.js',
-		banner: '/* Bundle as defined from all files in tests/serverside/*.js */\nfunction Test(remote=true) {\n',
+		file: './build/TestBundle.js',
+		banner: '/* Bundle as defined from all files in tests/serverside/*.js */\nfunction Test_(remote=false) {\n',
 		footer: 'try { return Log.get() } catch (e) {} \n}'
 	},
 	plugins

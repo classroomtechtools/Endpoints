@@ -1,0 +1,16 @@
+{
+    "source": {
+        "include": ["src/scripts/Export.js", "src/modules/Library.js"]
+    },
+    "plugins": ["plugins/markdown"],
+    "templates": {
+        "referenceTitle": "Endpoints by Classroom Tech Tools."
+    },
+    "markdown": {
+        "excludeTags": ["author"]
+    },
+    "opts": {
+        "template": "../jsdoc-template",
+        "destination": "./docs"
+    }
+}
