@@ -1,6 +1,10 @@
 # Endpoints
 
-A library SDK for Google AppsScripts that makes working with google and public APIs a cinch.
+A library SDK for Google AppsScripts that makes working with API endpoints a cinch. You can use it as an abstraction of `UrlFetchApp`, or use it to wrap Google APIs that don't have advanced services yet.
+
+## Example Libraries that use Endpoints:
+
+- [Chat Advanced Service](https://github.com/classroomtechtools/chat-adv-service).
 
 ## Quickstart
 
