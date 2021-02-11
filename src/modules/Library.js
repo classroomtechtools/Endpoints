@@ -14,11 +14,11 @@ class Batch {
   /**
    * An object that represents a collection of requests that will be asynchronously retrieved
    * @class
-   * @example
-   *     const batch = Batch();
-   *     batch.add(request);  // Request
-   *     const responses = bacth.fetchAll();
    * @return {Batch}
+   * @example
+const batch = Batch();
+batch.add(request);  // Request
+const responses = bacth.fetchAll();
    */
   constructor () {
     this.queue = [];
@@ -98,14 +98,14 @@ class DiscoveryCache {
     }
 
     getEndpoint(name, version) {
-      return new Namespace.EndpointsBase().httpget({url: `https://www.googleapis.com/discovery/v1/apis/${name}/${version}/rest`}).fetch();
+      return new Namespace.Endpoint().httpget({url: `https://www.googleapis.com/discovery/v1/apis/${name}/${version}/rest`}).fetch();
     }
 
 }
 
 
 /**
- * Class that fills in EndpointsBase.utils namespace
+ * Class that fills in Endpoint.utils namespace
  * provides utility methods used throughout the library, can be exported
  */
 class Utils {
@@ -219,15 +219,14 @@ class Request {
   }
 
   /**
-   * Calculates url, adding query parameters
-   * In case key fields is non empty, converts with .join(",") as needed by fields standard query param
+   * Calculates url, adding query parameters. In case key fields is non empty, converts with `join(",")` as needed by fields standard query param
    */
   get url () {
     if ( (this._fields || []).length > 0) {
       // convert fields data type from array to string with , delimiter, but don't replace
-      return this._url + EndpointsBase.utils.makeQueryString({...this.query, ...{fields: this._fields.join(',')}});
+      return this._url + Endpoint.utils.makeQueryString({...this.query, ...{fields: this._fields.join(',')}});
     }
-    return this._url + EndpointsBase.utils.makeQueryString(this.query);
+    return this._url + Endpoint.utils.makeQueryString(this.query);
   }
 
   /**
@@ -334,53 +333,47 @@ class Request {
 }
 
 
+/**
+ *
+ */
 class Response {
-  /*
-   * Response object
+
+  /**
+   * Response object, created in Request#fetch
    * @param {Object} param
    * @param {Object} param.response
    * @param {Object} param.requestObject
    */
-
   constructor ({response=null, requestObject=null}={}) {
     Enforce.named(arguments, {response: 'object', requestObject: 'object'}, 'Response#constructor');
     this.response = response;
     this.requestObject = requestObject;
 
-    // By default, if response cannot be parsed to json we'll send back a json with error information
-    // instead of throwing error
+    // By default, if response cannot be parsed to json we'll send back a json with error information instead of throwing error
     this.catchUnparseableJsonResponse = true;
   }
 
+  /**
+   * Return the plain text of the response (getContentText)
+   * @return {String}
+   */
   getText () {
-    /*
-     * Return the plain text of the response (getContentText)
-     * @return {String}
-     */
      return this.text;
   }
 
-  getJson () {
-    /*
-     * Return the json of the response
-     * @throws {Error} if not parsable
-     * @return {String}
-     */
-     return this.json;
-  }
-
+  /**
+   * Return the plain text of the response (getContentText)
+   */
   get text () {
-    /**
-     * Return the plain text of the response (getContentText)
-     */
     return this.response.getContentText();
   }
 
+  /**
+   * Returns the parsed text of the response. By default, if an error is encountered in call to `JSON.parse`, the returned json has an `error` property which in turn has `status`, `message`, `charset`, and `mime` properties.
+   * @throws {Error} if cannot be parsed as json but only if `this.catchUnparseableJsonResponse`
+   */
   get json () {
-    /*
-     * Return the json
-     * @throws {Error} if cannot be parsed as json
-     */
+
     const text = this.text;
     let result;
     try {
@@ -406,7 +399,7 @@ class Response {
     return result;
   }
 
-  /*
+  /**
    * Same as getAllHeaders
    * @return {Object}
    */
@@ -418,7 +411,7 @@ class Response {
     return this.headers;
   }
 
-  /*
+  /**
    * Same as getRepsonseCode, 200 is success
    * @return {Number}
    */
@@ -434,7 +427,7 @@ class Response {
     return this.statusCode;
   }
 
-  /*
+  /**
    * Returns true if statusCode == 200
    * @return {Boolean}
    */
@@ -443,13 +436,16 @@ class Response {
   }
 
   /**
-   * Returns this.ok
+   * Returns true if the `statusCode` of the repsonse object is 200
    * @return {Boolean}
    */
   isOk () {
     return this.ok;
   }
 
+  /**
+   * Returns false if the response is anything except `429`. Returns true only after sleeping for how many milliseconds as indicated in the `x-ratelimit-reset` header. Can be used to retry. Used internally by `Request#fetch` to avoid rate limitations.
+   */
   get hitRateLimit () {
     if (this.statusCode === 429) {
       const headers = this.getAllHeaders();
@@ -467,8 +463,8 @@ class Response {
   }
 
   /**
-   * Returns this.requestObject
-   * @return {Object}
+   * Returns the {@link https://developers.google.com/apps-script/reference/url-fetch/http-response HTTPResponse} object as returned by `UrlFetchApp#fetch`
+   * @return {HTTPResponse}
    */
   getRequest () {
     return this.requestObject;
@@ -476,12 +472,14 @@ class Response {
 }
 
 
-/*
- * Extensibly interact with Google APIs through Discovery
+/**
+ * Abstraction of UrlFectchApp
+ * @class
  */
-class EndpointsBase {
-  /*
-   * An abstract endpoint
+class Endpoint {
+
+  /**
+   * Normally you'll create an instance of this class indirectly by interfacing with the API. You can retrieve this class object with call to `Endpoints.module()`;
    * @param {Object}        [base]
    * @param {String}        [base.baseUrl] default=null
    * @param {String|Object} [base.oauth] default=null
@@ -492,16 +490,16 @@ class EndpointsBase {
    * @param {Object}        [stickies.payload] payload for any created requests
    */
   constructor ({baseUrl=null, oauth=null, discovery={}}={}, {stickyHeaders={}, stickyQuery={}, stickyPayload={}}={}) {
-    Enforce.named(arguments, {baseUrl: 'string', oauth: 'any', discovery: 'object', stickyHeaders: 'object', stickyQuery: 'object', stickyPayload: 'object'}, 'EndpointsBase.constructor');
+    Enforce.named(arguments, {baseUrl: 'string', oauth: 'any', discovery: 'object', stickyHeaders: 'object', stickyQuery: 'object', stickyPayload: 'object'}, 'Endpoints.constructor');
     this.disc = null;
     this.baseUrl = baseUrl;
     this.stickyHeaders = stickyHeaders;
     this.stickyQuery = stickyQuery;
     this.stickyPayload = stickyPayload;
     this.oauth = oauth;
-    if (Object.keys(discovery).length > 0 && EndpointsBase.utils.validateDiscovery(discovery)) {
+    if (Object.keys(discovery).length > 0 && Endpoint.utils.validateDiscovery(discovery)) {
       this.disc = new DiscoveryCache();
-      this.baseUrl = EndpointsBase.utils.translateToTemplate( this.disc.getUrl(discovery) );
+      this.baseUrl = Endpoint.utils.translateToTemplate( this.disc.getUrl(discovery) );
     }
 
     // set oauth to a basic class
@@ -522,7 +520,7 @@ class EndpointsBase {
     return this.baseUrl;
   }
 
-  /*
+  /**
    * Creates http get request
    * @param {String} method
    * @param {Object} base
@@ -534,6 +532,7 @@ class EndpointsBase {
    * @param {Object} [options.headers]
    * @param {Object} [advanced]
    * @param {Any}    [advanced.mixin] mixin pattern on this object
+   * @return {Request}
    */
   createRequest (method, {url=null, ...pathParams}={}, {query={}, payload={}, headers={}}={}, {mixin=null}={}) {
     const options = {};
@@ -542,7 +541,7 @@ class EndpointsBase {
     if (Object.keys(pathParams).length > 0) {
       if (!url && !this.baseUrl) throw new TypeError("createRequest requires a url named parameter in the second parameter");
       if (this.baseUrl && url) throw new TypeError("createRequest has been passed url when baseUrl has already been defined.");
-      options.url = EndpointsBase.utils.interpolate(this.baseUrl || url, pathParams);
+      options.url = Endpoint.utils.interpolate(this.baseUrl || url, pathParams);
     } else if (url !== null) {
       options.url = url;
     } else {
@@ -557,61 +556,66 @@ class EndpointsBase {
     return new Request(options, {mixin});
   }
 
-  /*
+  /**
    * Creates http get request
    * @param {Object} pathParams - replace ${placeholders} by key/values
    * @param {Object} [options]
    * @param {Object} [options.query]
    * @param {Object} [options.payload]
    * @param {Object} [options.headers]
+   * @return {Request}
    */
   httpget ({...pathParams}={}, {...options}={}) {
     return this.createRequest('get', pathParams, options);
   }
 
-  /*
+  /**
    * Creates http post request
    * @param {Object} pathParams - replace ${placeholders} by key/values
    * @param {Object} [options]
    * @param {Object} [options.query]
    * @param {Object} [options.payload]
    * @param {Object} [options.headers]
+   * @return {Request}
    */
   httppost ({...pathParams}={}, {...options}={}) {
     return this.createRequest('post', pathParams, options);
   }
 
-  /*
+  /**
    * Creates http put request
    * @param {Object} pathParams - replace ${placeholders} by key/values
    * @param {Object} [options]
    * @param {Object} [options.query]
    * @param {Object} [options.payload]
    * @param {Object} [options.headers]
+   * @return {Request}
    */
   httpput ({...pathParams}={}, {...options}={}) {
     return this.createRequest('put', pathParams, options);
   }
 
-  /*
+  /**
    * Creates http patch request
    * @param {Object} pathParams - replace ${placeholders} by key/values
    * @param {Object} [options]
    * @param {Object} [options.query]
    * @param {Object} [options.payload]
    * @param {Object} [options.headers]
+   * @return {Request}
    */
   httppatch ({...pathParams}={}, {...options}={}) {
     return this.createRequest('patch', path, options);
   }
 
-  /*
+  /**
    * Creates http delete request
    * @param {Object} pathParams - replace ${placeholders} by key/values
    * @param {Object} [options]
    * @param {Object} [options.query]
    * @param {Object} [options.payload]
    * @param {Object} [options.headers]
+   * @return {Request}
    */
   httpdelete({...pathParams}={}, {...options}={}) {
     return this.createRequest('delete', pathParams, options);
@@ -628,7 +632,7 @@ class EndpointsBase {
       resource: resource,
       method: method
     };
-    return new EndpointsBase({oauth, discovery});
+    return new Endpoint({oauth, discovery});
   }
 
   static googOauthService ({service = null, email = null, privateKey = null, scopes = null}) {
@@ -643,11 +647,10 @@ class EndpointsBase {
 
   static batchRequests ({...kwargs}={}) {
     const b = new Batch();
-    const r = new EndpointsBase(kwargs);
+    const r = new Endpoint(kwargs);
     return [b, r];
   }
 
 }
-const Namespace = {EndpointsBase, Response, Batch, Request};
+const Namespace = {Endpoint, Response, Batch, Request};
 export {Namespace};
-export const module = EndpointsBase;

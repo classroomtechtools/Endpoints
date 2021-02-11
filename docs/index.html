@@ -73,7 +73,7 @@
 
     
 
-    <h3>Classes</h3><ul><li id="Batch-nav"><a href="Batch.html">Batch</a><ul class='methods'><li data-type="method" id="Batch-add-nav"><a href="Batch.html#add">add</a></li><li data-type="method" id="Batch-fetchAll-nav"><a href="Batch.html#fetchAll">fetchAll</a></li></ul></li><li id="DiscoveryCache-nav"><a href="DiscoveryCache.html">DiscoveryCache</a></li><li id="Request-nav"><a href="Request.html">Request</a><ul class='methods'><li data-type="method" id="Request-addQuery-nav"><a href="Request.html#addQuery">addQuery</a></li><li data-type="method" id="Request-getUrl-nav"><a href="Request.html#getUrl">getUrl</a></li></ul></li><li id="Utils-nav"><a href="Utils.html">Utils</a><ul class='methods'><li data-type="method" id="Utils-interpolate-nav"><a href="Utils.html#interpolate">interpolate</a></li><li data-type="method" id="Utils-makeQueryString-nav"><a href="Utils.html#makeQueryString">makeQueryString</a></li><li data-type="method" id="Utils-translateToTemplate-nav"><a href="Utils.html#translateToTemplate">translateToTemplate</a></li></ul></li></ul><h3 id="global-nav">Global</h3><ul><li><a href="global.html#batch">batch</a></li><li><a href="global.html#createGoogEndpoint">createGoogEndpoint</a></li><li><a href="global.html#createGoogEndpointWithOauth">createGoogEndpointWithOauth</a></li><li><a href="global.html#createRequest">createRequest</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#interpolate">interpolate</a></li><li><a href="global.html#makeGoogOauthService">makeGoogOauthService</a></li><li><a href="global.html#module">module</a></li><li><a href="global.html#post">post</a></li><li><a href="global.html#resolveUrlInterpolation">resolveUrlInterpolation</a></li></ul>
+    <h3>Classes</h3><ul><li id="Batch-nav"><a href="Batch.html">Batch</a><ul class='methods'><li data-type="method" id="Batch-add-nav"><a href="Batch.html#add">add</a></li><li data-type="method" id="Batch-fetchAll-nav"><a href="Batch.html#fetchAll">fetchAll</a></li></ul></li><li id="DiscoveryCache-nav"><a href="DiscoveryCache.html">DiscoveryCache</a></li><li id="Endpoint-nav"><a href="Endpoint.html">Endpoint</a><ul class='methods'><li data-type="method" id="Endpoint-createRequest-nav"><a href="Endpoint.html#createRequest">createRequest</a></li><li data-type="method" id="Endpoint-getBaseUrl-nav"><a href="Endpoint.html#getBaseUrl">getBaseUrl</a></li><li data-type="method" id="Endpoint-httpdelete-nav"><a href="Endpoint.html#httpdelete">httpdelete</a></li><li data-type="method" id="Endpoint-httpget-nav"><a href="Endpoint.html#httpget">httpget</a></li><li data-type="method" id="Endpoint-httppatch-nav"><a href="Endpoint.html#httppatch">httppatch</a></li><li data-type="method" id="Endpoint-httppost-nav"><a href="Endpoint.html#httppost">httppost</a></li><li data-type="method" id="Endpoint-httpput-nav"><a href="Endpoint.html#httpput">httpput</a></li></ul></li><li id="Request-nav"><a href="Request.html">Request</a><ul class='methods'><li data-type="method" id="Request-addQuery-nav"><a href="Request.html#addQuery">addQuery</a></li><li data-type="method" id="Request-getUrl-nav"><a href="Request.html#getUrl">getUrl</a></li></ul></li><li id="Response-nav"><a href="Response.html">Response</a><ul class='methods'><li data-type="method" id="Response-getRequest-nav"><a href="Response.html#getRequest">getRequest</a></li><li data-type="method" id="Response-getStatusCode-nav"><a href="Response.html#getStatusCode">getStatusCode</a></li><li data-type="method" id="Response-getText-nav"><a href="Response.html#getText">getText</a></li><li data-type="method" id="Response-isOk-nav"><a href="Response.html#isOk">isOk</a></li></ul></li><li id="Utils-nav"><a href="Utils.html">Utils</a><ul class='methods'><li data-type="method" id="Utils-interpolate-nav"><a href="Utils.html#interpolate">interpolate</a></li><li data-type="method" id="Utils-makeQueryString-nav"><a href="Utils.html#makeQueryString">makeQueryString</a></li><li data-type="method" id="Utils-translateToTemplate-nav"><a href="Utils.html#translateToTemplate">translateToTemplate</a></li></ul></li></ul><h3 id="global-nav">Global</h3><ul><li><a href="global.html#batch">batch</a></li><li><a href="global.html#createGoogEndpoint">createGoogEndpoint</a></li><li><a href="global.html#createGoogEndpointWithOauth">createGoogEndpointWithOauth</a></li><li><a href="global.html#createRequest">createRequest</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#interpolate">interpolate</a></li><li><a href="global.html#makeGoogOauthService">makeGoogOauthService</a></li><li><a href="global.html#module">module</a></li><li><a href="global.html#post">post</a></li><li><a href="global.html#resolveUrlInterpolation">resolveUrlInterpolation</a></li></ul>
   </nav>
 
   <div id="main">
@@ -94,62 +94,71 @@
       <h1>Endpoints</h1>
 <p>A library SDK for Google AppsScripts that makes working with google and public APIs a cinch.</p>
 <h2>Quickstart</h2>
-<h3>To use as a library as an AppsScripts library</h3>
-<p>Library ID: <code>1WovLPVqVjZxkxkgCNgI3S_A3eDsX3DWOAoetZgRGW1JpGQ_9TK25y7mB</code>
-Project ID: <code>MOwaCM3sJzFttpUe7GAFibvD8R0iiSsw_</code></p>
-<h3>To import as an npm module:</h3>
-<p><code>npm install @classroomtechtools/endpoints</code></p>
-<p>The above will also install the following dependencies:</p>
+<p>Install:</p>
 <ul>
-<li>@classroomtechtools/unittesting</li>
-<li>@classroomtechtools/enforce_arguments</li>
+<li>Library ID: <code>1WovLPVqVjZxkxkgCNgI3S_A3eDsX3DWOAoetZgRGW1JpGQ_9TK25y7mB</code></li>
+<li>Project ID: <code>MOwaCM3sJzFttpUe7GAFibvD8R0iiSsw_</code></li>
 </ul>
-<h2>Tour</h2>
-<p>The library uses namespaces to organize itself:</p>
-<p><img src="/assets/EndpointsNamespaces.png" alt="The Namespaces"></p>
-<p>As you can see, there are many methods within the <code>$</code> namespace, and they indicate that the are starter methods; you'll need to use these somehow (depending on your use case) to get started with interacting with an API.</p>
-<p>Notice that <code>$.createGetRequest</code> returns a <code>Request</code> object. So let's see what's available at the <code>Endpoint.Request</code> namespace:</p>
-<p><img src="/assets/EndpointsRequestNamespace.png" alt="The Namespaces"></p>
-<p>Notice that all of these methods living at this namespace require a <code>Request</code> object as the first (or only) parameter? In that way, you can use autocomplete to navigate all the various methods that are available on any object created by the <code>$</code> methods.</p>
-<p>There is a method <code>Endpoints.Request.getUrl</code> method, and so there is also <code>Request#getUrl</code>, which means you can do this:</p>
-<pre class="prettyprint source lang-js"><code>const request = Endpoints.$.createGetRequest(url);
-const url1 = request.getUrl();
-// or
-const url2 = request.url;
-Logger.log(url1 === url2);  // true
+<p>Use instead of <code>UrlFetchApp.fetch</code>:</p>
+<pre class="prettyprint source lang-js"><code>function myFunction () {
+  // create simple get request with query parameter
+  const json = Endpoints.get('https://example.com', {
+    query: {
+      s: 'searchstring'
+    }
+  });
+
+  // create simple post request with headers and payload
+  const json = Endpoints.post('https://example.com', {
+    payload: {
+      key: 'value'
+    },
+    headers: {
+      'Authorization': 'Basic ' + token;
+    }
+  });
+}
 </code></pre>
-<p>Methods that start with <code>get</code> indicate that there is a property on the object which can be immediately accessed.</p>
-<p>Curious to read more about what all the various methods actually do? You can read the source code, or you can do so via the online editor with <code>Endpoints.$.jdoc</code>:</p>
-<pre class="prettyprint source lang-js"><code>const doc = Endpoints.$.jdoc(request.getUrl);
-Logger.log(doc);
+<p>Or use it to interact with Google APIs:</p>
+<pre class="prettyprint source lang-js"><code>function myFunction () {
+  // creates endpoint with oauth as &quot;me&quot;
+  const endpoint = Endpoints.createGoogEndpoint('sheets', 'v4', 'spreadsheet.values', 'get');
+
+  // use endpoint object to create get or post requests
+  const request = endpoint.httpget({spreadsheetId: '&lt;id>'});
+
+  // the request object has fetch method
+  const response = request.fetch();
+
+  // the response object has json property
+  Logger.log(response.json);
+}
 </code></pre>
-<p>outputs:</p>
-<pre class="prettyprint source"><code>function request_getUrl(request) {
-  /**
-   * Calculates the url (including any query parameters) sent/will be sent to endpoint on fetch
-   * @alias request.getUrl()
-   * @alias request.url
-   */
+<p>Or use it to programmatically create differenet kinds of requests:</p>
+<pre class="prettyprint source lang-js"><code>function myFunction () {
+  const request = Endpoints.createRequest('get', 'https://example.com');
+  if (condition)
+    request.addQuery({s: 'searchstring'});
+  else
+    request.addQuery({p: 'something'});
+}
 </code></pre>
-<p>It explains what the function does, where we learn that it'll return the full url including any query parameters that are on the <code>Request</code> object, and also the equivalent methods that live on the object.</p>
 <h2>Examples</h2>
 <h3>Download from Wikipedia</h3>
 <p>Wikipedia offers a great API to get us started learning how to use this library to make simple requests.</p>
 <pre class="prettyprint source lang-js"><code>const wpurl = 'https://test.wikipedia.org/w/api.php';
-const request = Endpoints.$.createGetRequest(wpurl);
+const request = Endpoints.createRequest('get', wpurl);
 </code></pre>
 <p>The documentation for this API says we have to provide it some standard query parameters, so that there's an <code>?action=query</code> and <code>&amp;format=json</code> tacked onto the end of the URL, so let's figure out how to add them.</p>
-<p>We have a request object and we explore the <code>Endpoints.Request</code> namespace which indicates there is an <code>addQuery</code> method. From the tour above, we can see that the <code>request</code> variable we created from the <code>createGetRequest</code> method has <code>addQuery</code> which will take an object:</p>
+<p>We have a request object and we explore the <code>Request</code> class which indicates there is an <code>addQuery</code> method.</p>
 <pre class="prettyprint source lang-js"><code>const query = {action: 'query', format: 'json'};
-Endpoints.Request.addQuery(request, query);
-// or just
 request.addQuery(query);
 const url = request.url;
 Logger.log(url);  // url includes the query parameters
 </code></pre>
 <p>The target API also requires a <code>titles</code> query parameter that indicates which article we are after:</p>
 <pre class="prettyprint source lang-js"><code>request.addQuery({titles: 'Albert_Einstein'});
-request.url;  // the full url including query parameters
+request.url;  // the full url including previous query parameters
 </code></pre>
 <p>Let's reach out to the internet and get the response:</p>
 <pre class="prettyprint source lang-js"><code>const response = request.fetch();
@@ -159,62 +168,61 @@ Logger.log(json);  // the response as json
 </code></pre>
 <h3>Interact with Google APIs, in batch mode</h3>
 <p>Let's get real. We probably don't use Google AppsScripts to download wikipedia articles. We use it to build applications that depend somehow on Google APIs, such as the Spreadsheet API.</p>
-<p>Imagine your application needs to write the exact same information to two different spreadsheet documents. Let's learn how to do that with the batch operations.</p>
-<p>We need to create an <code>Endpoint</code> object, instead of directly creating a <code>Request</code> object as we did before, which will then be used to build the needed <code>Request</code> object. First we need to get an endpoint object intended to be used with Google APIs, which we can do via <code>Endpoints.$.createGoogEndpoint</code>. Let's learn what it does:</p>
-<pre class="prettyprint source lang-js"><code>const doc = Endpoints.$.jdoc(Endpoints.$.createGoogEndpoint);
-Logger.log(doc);
+<p>Imagine your application needs to write the exact same information to two different spreadsheet documents. Let's learn how to do that with batch operations.</p>
+<p>We need to create an <code>Endpoint</code> object, instead of directly creating a <code>Request</code> object as we did before, which will then be used to build the needed <code>Request</code> object. First we need to get an endpoint object intended to be used with the target Google APIs:</p>
+<pre class="prettyprint source lang-js"><code>const endpoint = Endpoints.createGoogEndpoint('sheets', 'v4', 'spreadsheets.values', 'update');  
 </code></pre>
-<p>outputs:</p>
-<pre class="prettyprint source"><code>function $_createGoogEndpoint (name, version, resource, method) {
-/**
- * Uses the discovery service to derive the baseUrl for this particular endpoint * Users can become more familiar with possible values by using 
- * https://developers.google.com/discovery/v1/reference/apis/getRest 
- * Note: Any Google service that has a discovery endpoint can use this method to derive endpoint 
- * Note: Oauth authentication is placed in headers via ScriptApp.getOAuthToken() upon request (not upon creation) 
- * @see EndpointsBase_.discovery 
- */
-}
-</code></pre>
-<p>Very cool. It handles oauth for us by adding headers, and using the discovery service, we see that we can pass the following:</p>
-<pre class="prettyprint source lang-js"><code>const endpoint = Endpoints.$.createGoogEndpoint('sheets', 'v4', 'spreadsheets.values', 'update');  
-</code></pre>
-<p>This refers to the Sheets <code>&quot;sheets&quot;</code> service, version <code>&quot;v4&quot;</code>, in the resource <code>&quot;spreadsheets.values&quot;</code> and the <code>&quot;update&quot;</code> method, which is the target endpoint that Google exposes for updating spreadsheets that we have in mind. We need to create a http <code>put</code> request with that endpoint. Now that we have an endpoint object, by looking through the <code>Endpoints.Endpoint</code> namespace, we find that <code>Endpoints.Endpoint.httpput</code> method which will allow us to prepare the request object:</p>
+<p>This refers to the Sheets <code>&quot;sheets&quot;</code> service, version <code>&quot;v4&quot;</code>, in the resource <code>&quot;spreadsheets.values&quot;</code> and the <code>&quot;update&quot;</code> method, which is the target endpoint that Google exposes for updating spreadsheets that we have in mind. We need to create a http <code>put</code> request with that endpoint. Documentation for this is <a href="https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/update">here</a>.</p>
+<p>Now that we have an endpoint object, by looking through the <code>Endpoints</code> namespace, we find that <code>httpput</code> method which will allow us to prepare the request object:</p>
 <pre class="prettyprint source lang-js"><code>const request = endpoint.httpput(
   {    /* path parameters */		
-       spreadsheetId: '&lt;id>',
-       range: 'Sheet1!A1'
-  },{  /* query parameters */
-       valueInputOption: 'RAW'
-  },{  /* payload */
-       range: 'Sheet1!A1',
-       majorDimension: 'ROWS',
-       values: [[1]]
+    spreadsheetId: '&lt;id>',
+    range: 'Sheet1!A1'
+  },{
+    query: {
+      valueInputOption: 'RAW'
+    }
+    payload: {
+      range: 'Sheet1!A1',
+      majorDimension: 'ROWS',
+      values: [[1]]
+    }
   }
 );
 </code></pre>
-<p>This is all well and good, but that's kind of a lot of work. Let's use the batch functions and see why it might be worth doing that work. Imagine you need to update two different spreadsheets with the exact same info:</p>
-<pre class="prettyprint source lang-js"><code>const batch = Endpoints.$.initBatch();
+<p>That's how to do one, but how to do two programmatically? Let's use the batch functions. Imagine you need to update two different spreadsheets with the exact same info:</p>
+<pre class="prettyprint source lang-js"><code>const batch = Endpoints.batch();
 const ids = ['&lt;id1>', '&lt;id2>'];
     
 ids.forEach(id => {
-	const request = endpoint.httpput(
-          range: 'Sheet1!A1',
-          spreadsheetId: id
-        },{
-          valueInputOption: 'RAW'
-        },{
-          range: 'Sheet1!A1',
-          majorDimension: 'ROWS',
-          values: [[1]]
-        }
-     );
-     batch.add(request);
+	const request = endpoint.httpput({
+    range: 'Sheet1!A1',
+    spreadsheetId: id
+  }, {
+    query: {
+      valueInputOption: 'RAW'
+    },
+    payload: {
+      range: 'Sheet1!A1',
+      majorDimension: 'ROWS',
+      values: [[1]]
+    }
+  });
+
+  batch.add(request);
+
 });
     
 const responses = batch.fetchAll();
 </code></pre>
-<p>You don't have to use the batch functions to create requests to the same endpoint. Any request that you can create with this library can be processed in batch mode.</p>
-<p>Or you can build a library that abstracts away all those things for us.</p>
+<p>You don't have to use the batch functions to create requests to the same endpoint. Any request that you can create with this library can be processed in batch mode, as long as the parameter to <code>add</code> is a <code>Request</code> object.</p>
+<h1>To import as an npm module:</h1>
+<p><code>npm install @classroomtechtools/endpoints</code></p>
+<p>The above will also install the following dependencies:</p>
+<ul>
+<li>@classroomtechtools/unittesting</li>
+<li>@classroomtechtools/enforce_arguments</li>
+</ul>
     </article>
   </section>
 
