@@ -521,7 +521,7 @@ class Endpoint {
   }
 
   /**
-   * Creates http get request
+   * Creates any http request. Used by the `http*` methods.
    * @param {String} method
    * @param {Object} base
    * @param {String} [base.url]

@@ -112,13 +112,13 @@ Let's get real. We probably don't use Google AppsScripts to download wikipedia a
 
 Imagine your application needs to write the exact same information to two different spreadsheet documents. Let's learn how to do that with batch operations.
 
-We need to create an `Endpoint` object, instead of directly creating a `Request` object as we did before, which will then be used to build the needed `Request` object. First we need to get an endpoint object intended to be used with the target Google APIs:
-
 ```js
 const endpoint = Endpoints.createGoogEndpoint('sheets', 'v4', 'spreadsheets.values', 'update');  
 ```
 
-This refers to the Sheets `"sheets"` service, version `"v4"`, in the resource `"spreadsheets.values"` and the `"update"` method, which is the target endpoint that Google exposes for updating spreadsheets that we have in mind. We need to create a http `put` request with that endpoint. Documentation for this is [here](https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/update).
+Under the hood, this `createGoogEndpoint` uses the [Discovery Services API](https://developers.google.com/discovery) to build the endpoint object.
+
+In this case, we are interacting with the `"sheets"` service, version `"v4"`, in the resource `"spreadsheets.values"` and the `"update"` method, which is the target endpoint that Google exposes for updating spreadsheets that we have in mind. We need to create a http `put` request with that endpoint. Documentation for this is [here](https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/update).
 
 Now that we have an endpoint object, by looking through the `Endpoints` namespace, we find that `httpput` method which will allow us to prepare the request object:
 
@@ -127,7 +127,7 @@ const request = endpoint.httpput(
   {    /* path parameters */		
     spreadsheetId: '<id>',
     range: 'Sheet1!A1'
-  },{
+  },{  /* request body */
     query: {
       valueInputOption: 'RAW'
     }
@@ -138,7 +138,12 @@ const request = endpoint.httpput(
     }
   }
 );
+
+const response = request.fetch();
+Logger.log(response.json);  // got data
 ```
+
+So the general sequence in this library is that you make an `Endpoint` instance, then on that use a method that starts with `http` to get a  `Request` instance, call `.fetch` on that to get a `Response` object, and call `json` on that to get the raw data back.
 
 That's how to do one, but how to do two programmatically? Let's use the batch functions. Imagine you need to update two different spreadsheets with the exact same info:
 
@@ -147,7 +152,7 @@ const batch = Endpoints.batch();
 const ids = ['<id1>', '<id2>'];
     
 ids.forEach(id => {
-	const request = endpoint.httpput({
+  const request = endpoint.httpput({
     range: 'Sheet1!A1',
     spreadsheetId: id
   }, {

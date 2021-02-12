@@ -174,16 +174,16 @@ Logger.log(json);  // the response as json
 <h3>Interact with Google APIs, in batch mode</h3>
 <p>Let's get real. We probably don't use Google AppsScripts to download wikipedia articles. We use it to build applications that depend somehow on Google APIs, such as the Spreadsheet API.</p>
 <p>Imagine your application needs to write the exact same information to two different spreadsheet documents. Let's learn how to do that with batch operations.</p>
-<p>We need to create an <code>Endpoint</code> object, instead of directly creating a <code>Request</code> object as we did before, which will then be used to build the needed <code>Request</code> object. First we need to get an endpoint object intended to be used with the target Google APIs:</p>
 <pre class="prettyprint source lang-js"><code>const endpoint = Endpoints.createGoogEndpoint('sheets', 'v4', 'spreadsheets.values', 'update');  
 </code></pre>
-<p>This refers to the Sheets <code>&quot;sheets&quot;</code> service, version <code>&quot;v4&quot;</code>, in the resource <code>&quot;spreadsheets.values&quot;</code> and the <code>&quot;update&quot;</code> method, which is the target endpoint that Google exposes for updating spreadsheets that we have in mind. We need to create a http <code>put</code> request with that endpoint. Documentation for this is <a href="https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/update">here</a>.</p>
+<p>Under the hood, this <code>createGoogEndpoint</code> uses the <a href="https://developers.google.com/discovery">Discovery Services API</a> to build the endpoint object.</p>
+<p>In this case, we are interacting with the <code>&quot;sheets&quot;</code> service, version <code>&quot;v4&quot;</code>, in the resource <code>&quot;spreadsheets.values&quot;</code> and the <code>&quot;update&quot;</code> method, which is the target endpoint that Google exposes for updating spreadsheets that we have in mind. We need to create a http <code>put</code> request with that endpoint. Documentation for this is <a href="https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/update">here</a>.</p>
 <p>Now that we have an endpoint object, by looking through the <code>Endpoints</code> namespace, we find that <code>httpput</code> method which will allow us to prepare the request object:</p>
 <pre class="prettyprint source lang-js"><code>const request = endpoint.httpput(
   {    /* path parameters */		
     spreadsheetId: '&lt;id>',
     range: 'Sheet1!A1'
-  },{
+  },{  /* request body */
     query: {
       valueInputOption: 'RAW'
     }
@@ -194,13 +194,17 @@ Logger.log(json);  // the response as json
     }
   }
 );
+
+const response = request.fetch();
+Logger.log(response.json);  // got data
 </code></pre>
+<p>So the general sequence in this library is that you make an <code>Endpoint</code> instance, then on that use a method that starts with <code>http</code> to get a  <code>Request</code> instance, call <code>.fetch</code> on that to get a <code>Response</code> object, and call <code>json</code> on that to get the raw data back.</p>
 <p>That's how to do one, but how to do two programmatically? Let's use the batch functions. Imagine you need to update two different spreadsheets with the exact same info:</p>
 <pre class="prettyprint source lang-js"><code>const batch = Endpoints.batch();
 const ids = ['&lt;id1>', '&lt;id2>'];
     
 ids.forEach(id => {
-	const request = endpoint.httpput({
+  const request = endpoint.httpput({
     range: 'Sheet1!A1',
     spreadsheetId: id
   }, {
