@@ -166,14 +166,15 @@ ids.forEach(id => {
     }
   });
 
-  batch.add(request);
+  batch.add({request: request});
 
 });
     
 const responses = batch.fetchAll();
+Logger.log(responses.length);  // 2
 ```
 
-You don't have to use the batch functions to create requests to the same endpoint. Any request that you can create with this library can be processed in batch mode, as long as the parameter to `add` is a `Request` object.
+You don't have to use the batch functions to create requests to the same endpoint. Any request that you can create with this library can be processed in batch mode, as long as the `request` parameter to `add` is a `Request` object.
 
 ## Notes on `createGoogEndpoint`
 

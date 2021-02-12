@@ -170,7 +170,7 @@ class DiscoveryCache {
       if (resource.indexOf('.') === -1) {
         // straight forward
         if (!data.resources[resource]) {
-          throw new Error(`No resource "${resource}" found in ${name}${version}`);
+          throw new Error(`No resource "${resource}" found in ${name}${version}; only has: ${Object.keys(data.resources)}`);
         }
         if (!data.resources[resource].methods[method]) {
           throw new Error(`No method "${method}" found in resource "${resource}" of "${name}${version}", only: ${Object.keys(data.resources[resource].methods)} available`);
