@@ -225,7 +225,33 @@ ids.forEach(id => {
 const responses = batch.fetchAll();
 </code></pre>
 <p>You don't have to use the batch functions to create requests to the same endpoint. Any request that you can create with this library can be processed in batch mode, as long as the parameter to <code>add</code> is a <code>Request</code> object.</p>
-<h1>To import as an npm module:</h1>
+<h2>Notes on <code>createGoogEndpoint</code></h2>
+<p>This method accepts four parameters <code>name</code>, <code>version</code>, <code>resource</code> and <code>method</code>, and these four have to match how the Discovery Service is structured and kept. The best way to get the real values that are really needed (for now?) is to go to this <a href="https://developers.google.com/discovery/v1/reference/apis/list">try API page</a> and try to work out the exact terminology for the four parameters.</p>
+<h3>Reference for commonly-used discovery documents</h3>
+<p>Finding these names can be tricky, which is why this table can be helpful:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Common Name</th>
+<th style="text-align:center">name, version</th>
+<th style="text-align:right">Documentation Link</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Admin SDK</td>
+<td style="text-align:center">&quot;admin&quot;, &quot;directory_v1&quot;</td>
+<td style="text-align:right"><a href="https://developers.google.com/admin-sdk/directory/reference/rest">link</a></td>
+</tr>
+<tr>
+<td style="text-align:left">Sheets</td>
+<td style="text-align:center">&quot;sheets&quot;, &quot;v4&quot;</td>
+<td style="text-align:right"><a href="https://developers.google.com/sheets/api/reference/rest">link</a></td>
+</tr>
+</tbody>
+</table>
+<p>If you, like me, have to spend a few minutes finding them, add a pull request and I'll add it to the table.</p>
+<h2>To import as an npm module:</h2>
 <p><code>npm install @classroomtechtools/endpoints</code></p>
 <p>The above will also install the following dependencies:</p>
 <ul>

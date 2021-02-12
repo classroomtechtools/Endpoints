@@ -175,8 +175,22 @@ const responses = batch.fetchAll();
 
 You don't have to use the batch functions to create requests to the same endpoint. Any request that you can create with this library can be processed in batch mode, as long as the parameter to `add` is a `Request` object.
 
+## Notes on `createGoogEndpoint`
 
-# To import as an npm module:
+This method accepts four parameters `name`, `version`, `resource` and `method`, and these four have to match how the Discovery Service is structured and kept. The best way to get the real values that are really needed (for now?) is to go to this [try API page](https://developers.google.com/discovery/v1/reference/apis/list) and try to work out the exact terminology for the four parameters.
+
+### Reference for commonly-used discovery documents
+
+Finding these names can be tricky, which is why this table can be helpful:
+
+| Common Name | name, version | Documentation Link |
+| :---         |     :---:      |          ---: |
+| Admin SDK   | "admin", "directory_v1"     | [link](https://developers.google.com/admin-sdk/directory/reference/rest)    |
+| Sheets     | "sheets", "v4"       | [link](https://developers.google.com/sheets/api/reference/rest)      |
+
+If you, like me, have to spend a few minutes finding them, add a pull request and I'll add it to the table.
+
+## To import as an npm module:
 
 `npm install @classroomtechtools/endpoints`
 
