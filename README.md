@@ -199,3 +199,37 @@ The above will also install the following dependencies:
 
 - @classroomtechtools/unittesting
 - @classroomtechtools/enforce_arguments
+
+## Unit tests
+
+This library was built with unit tests, both locally and in the AppsScripts context.
+
+```js
+interacting incorrectly with endpoint that produces 404
+  ✔ json instead contains error object with message and information
+
+using batch mode to mirror spreadsheet writes
+  ✔ responses has length of 2
+
+using service account to create
+  ✔ Spaces available
+
+http get requests to sheets v4 service, expected to fail
+  ✔ Endpoint#baseUrl returns templated string of endpoint
+  ✔ Request#getUrl returns url based on substitutions within baseUrl
+  ✔ Response#isOk indicates unsuccessful request
+  ✔ Response#statusCode indicates 403 error (permission denied)
+  ✔ Response#headers returns headers with Content-Type 'application/json; charset=UTF-8'
+  ✔ Response#json returns json with error.status set to 'PERMISSION_DENIED'
+  ✔ Response#response returns the original request
+  ✔ Request#headers returns Authorization: Bearer
+
+http get request with no authentication
+  ✔ internally, Request#query object starts with empty object
+  ✔ internally, Request#url is same as original passed
+  ✔ Request#addQuery appends query parameters to returned url
+  ✔ Request#addQuery appends query parameters to url, keeping old values
+  ✔ Response#ok returns true on success
+  ✔ Response#json returns parsed json
+  ✔ Response#statusCode returns 200 on success
+```

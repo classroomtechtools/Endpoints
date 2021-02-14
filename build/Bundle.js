@@ -1314,21 +1314,15 @@ function toLowerCaseKeys_(obj) {
 const OAuth2 = {createService};
 
 /**
- * Interacting with APIs, made a cinch
- * @author Adam Morris https://classroomtechtools.com classroomtechtools.ctt@gmail.com
- * @lastmodified 4 May 2020
- * @version 0.8 Adam Morris: Changed name to Endponts, restructured for jsdoc
- * @version 0.6 Adam Morris: First draft with oauth fix
- * @library MsIomH3IL48mShjNoiUoRiq8b30WIDiE_
+ * An object that represents a collection of requests that will be asynchronously retrieved. Use included methods `add` and `fetchAll` to interact with APIs more than one at a time.
+ * @class
  */
-
 class Batch {
   /**
-   * An object that represents a collection of requests that will be asynchronously retrieved
-   * @class
+   * Usually created with call to `Endpoints.batch`
    * @return {Batch}
    * @example
-const batch = Batch();
+const batch = Endpoints.batch();
 batch.add(request);  // Request
 const responses = bacth.fetchAll();
    */
@@ -1347,17 +1341,17 @@ const responses = bacth.fetchAll();
   }
 
   /**
-   * Use UrlFetchApp to reach out to the internet. Returns Response objects in same order as requests
-   * Response objects also have #request
-   * @example Make list of response jsons
-   *          batch.fetchAll().map(response => response.json);
+   * Use UrlFetchApp to reach out to the internet. Returns Response objects in same order as requests. You can use `json` property to get the data result, but is not done for you automatically. Note that Response objects also have `request` property, which can be used to debug if necessary.
    * @return {Response[]}
-   * @example Make list of original request urls
-   *          batch.fetchAll().map(response => response.request.url);
+   * @example
+// Make list of response jsons
+batch.fetchAll().map(response => response.json);
+   * @example
+// Make list of original request urls
+batch.fetchAll().map(response => response.request.url);
    */
   fetchAll () {
     return UrlFetchApp.fetchAll(this.queue).map( (response, idx) => {
-                                                // NOTE: requestObject is just a regular object
       const requestObject = this.queue[idx];
       return new Response({response, requestObject});
     });
@@ -1366,7 +1360,7 @@ const responses = bacth.fetchAll();
 
 
 /**
- * DiscoveryCache - Used internally
+ * DiscoveryCache - Used internally to save in cache the various url paths to endpoints with the Google Discovery Service. Fun fact: It actually uses this library's `httpget` to interact with `https://www.googleapis.com/discovery/v1/apis/`
  */
 class DiscoveryCache {
     constructor () {
@@ -1390,7 +1384,7 @@ class DiscoveryCache {
       if (resource.indexOf('.') === -1) {
         // straight forward
         if (!data.resources[resource]) {
-          throw new Error(`No resource "${resource}" found in ${name}${version}`);
+          throw new Error(`No resource "${resource}" found in ${name}${version}; only has: ${Object.keys(data.resources)}`);
         }
         if (!data.resources[resource].methods[method]) {
           throw new Error(`No method "${method}" found in resource "${resource}" of "${name}${version}", only: ${Object.keys(data.resources[resource].methods)} available`);
@@ -1480,10 +1474,20 @@ class Utils {
 const PRIVATE_OAUTH = Symbol('private_oauth');
 
 /**
- * Request instance
+ * Request instance. Instances of this class are created with `createRequest`
  */
 class Request {
 
+  /**
+   * Usually created on your behalf
+   * @param {Object} main - the first parameter
+   * @param {String} url - the url (normally before query parameters)
+   * @param {Any} oauth - oauth object, usually created via Oauth2 lib
+   * @param {String} method - http method i.e. 'get' etc
+   * @param {Object} headers - http headers
+   * @param {Object} query - query parameters
+   * @param {Any} mixin - advanced extensibility, added to `this` as second parameter to `Object.assign`
+   */
   constructor ({url, oauth, method='get', headers={}, payload={}, query={}}={}, {mixin=null}) {
     Enforce.named(arguments, {url: '!string', oauth: '!any', method: 'string', headers: 'object', payload: 'object', query: 'object', mixin: 'any'});
     this._url = url;
@@ -1498,9 +1502,15 @@ class Request {
     if (mixin) Object.assign(this, mixin);
   }
 
-  /*
-   * Reach out to the internet with UrlFetchApp, returns Response object
+  /**
+   * Reach out to the internet with UrlFetchApp, returns Response object. Automatically detects rate limit, pauses, and tries again (just once)
    * @return {Response}
+   * @example
+const request = Endpoints.createRequest('get', {
+  url: 'https://example.com'
+});
+const response = request.fetch();
+Logger.log(response.json);
    */
   fetch () {
     const {url, params: requestObject} = this.url_params({embedUrl: true});
@@ -1523,7 +1533,7 @@ class Request {
   }
 
   /**
-   * Returns this.url
+   * Alternative to this.url
    * @return {String}
    */
   getUrl () {
@@ -1544,6 +1554,12 @@ class Request {
   /**
    * Copies key in obj to request object so that query parameters are passed on fetch
    * @param {Object} obj - the object that is copied to queries object
+   * @example
+const request = Endpoints.createRequest('get', {
+  url: 'https://example.com'
+});
+request.addQuery({p: 'str'});
+request.url;  // https://exmaple.com?p=str
    */
   addQuery (obj={}) {
     Enforce.positional(arguments, {obj: 'object'}, 'Request#addQuery');
@@ -1552,6 +1568,10 @@ class Request {
     }
   }
 
+  /**
+   * Adds header
+   * @param {Object} obj
+   */
   addHeader (obj={}) {
     /**
      * Copies key in obj to headers object so
@@ -1562,6 +1582,9 @@ class Request {
     }
   }
 
+  /**
+   * Sets `this.query` to empty object
+   */
   clearQuery () {
     this.query = {};
   }
@@ -1571,7 +1594,7 @@ class Request {
     this._fields.push(value);
   }
 
-  /*
+  /**
    * Pushes value to this.query.fields
    * @param {String} value
    */
@@ -1579,20 +1602,40 @@ class Request {
     this.fields = value;
   }
 
-  /*
-   * Sets query.fields to empty array
+  /**
+   * Sets _fields to empty array
    */
   clearFields () {
     this._fields = [];
   }
 
-  /*
-   * Returns the param object required for UrlFetchApp.fetch or fetchAll
-   * @param {bool} embedUrl if true contains url in object (for fetchAll)
-   * @param {bool} muteExceptions if true errors will be returned as jsons
-   * @returns {[str, obj]}
+  url_params(...params) {
+    return this.getParams(...params);
+  }
+
+  /**
+   * @typedef urlParamsObj
+   * @property {String} url - The url including query parameters
+   * @property {Object} params - The parameters sent as second parameter to `UrlFetchApp`. Will optionally include a `url` property (when `getParams` is called with `{embedUrl:true}`)
    */
-  url_params ({embedUrl=false, muteExceptions=true}={}) {
+
+
+  /**
+   * Returns the param object required for UrlFetchApp.fetch or fetchAll
+   * @param {bool} embedUrl - if true add `url` property in object (needed for fetchAll)
+   * @param {bool} muteExceptions - if true errors will be returned as jsons
+   * @returns {urlParamsObj}
+   * @example
+  const req = Endpoints.createRequest('get', {
+    url: 'http://example.com'
+  }, {
+    query: {p: 'str'}
+  });
+  const {url, params} = req.getParams();
+  Logger.log(url);  // 'http://exmaple.com?p=str'
+  Logger.log(params);  // {method: 'get', ...}
+   */
+  getParams ({embedUrl=false, muteExceptions=true}={}) {
     Enforce.named(arguments, {embedUrl: 'boolean', muteExceptions: 'boolean'}, 'Request#url_params');
     const params = {};
 
@@ -1638,15 +1681,11 @@ class Request {
     return {url, params};
   }
 
-  getUrlParams () {
-    return
-  }
-
 }
 
 
 /**
- *
+ * Response objects, created on your behalf. Contains both the actual response object returned by `UrlFetchApp` and the params object that was built and sent to `UrlFetchApp`
  */
 class Response {
 

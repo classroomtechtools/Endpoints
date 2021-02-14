@@ -164,3 +164,7 @@ function batch () {
   const {Namespace} = Import;
   return new Namespace.Batch();
 }
+
+function mocklib_() {
+  return {createGoogEndpoint, batch, post, get, createGoogEndpointWithOauth, makeGoogOauthService, resolveUrlInterpolation, createRequest, interpolate, resolveUrlInterpolation};
+}
