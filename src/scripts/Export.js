@@ -165,6 +165,15 @@ function batch () {
   return new Namespace.Batch();
 }
 
+/**
+ * Returns a convenient class that has a `token` property which will authenticate requests with "you" via `ScriptApp.getOauthToken`
+ */
+function getOauthAsMe () {
+  const {Namespace} = Import;
+  return new Namespace.Oauth()
+}
+
+
 function mocklib_() {
-  return {createGoogEndpoint, batch, post, get, createGoogEndpointWithOauth, makeGoogOauthService, resolveUrlInterpolation, createRequest, interpolate, resolveUrlInterpolation};
+  return {createGoogEndpoint, batch, post, get, createGoogEndpointWithOauth, makeGoogOauthService, resolveUrlInterpolation, createRequest, interpolate, resolveUrlInterpolation, getOauthAsMe};
 }

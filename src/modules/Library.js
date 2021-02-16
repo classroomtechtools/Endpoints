@@ -2,6 +2,17 @@ import {Enforce} from '@classroomtechtools/enforce_arguments';
 import {OAuth2} from './lib/Oauth2.js';
 
 /**
+ * Class used for cases where oauth is send as "me", where `SciptApp.getOAuthToken` is appropriate auth. The token is actually retrieved on the call itself, rather than at endpoint creation (otherwise it might timeout)
+ * @property {String} token
+ */
+class Oauth {
+  get token () {
+    return ScriptApp.getOAuthToken();
+  }
+}
+
+
+/**
  * An object that represents a collection of requests that will be asynchronously retrieved. Use included methods `add` and `fetchAll` to interact with APIs more than one at a time.
  * @class
  */
@@ -61,6 +72,7 @@ class DiscoveryCache {
       let data = this.cache.get(key);
       let ret = null;
       if (data) {
+        console.log({key, fromCache: true})
         return data;
       }
       data = this.getEndpoint(name, version).json;
@@ -88,6 +100,7 @@ class DiscoveryCache {
       }
 
       this.cache.put(key, ret, 21600);  // max is 6 hours
+      console.log({key, fromCache: false})
       return ret;
     }
 
@@ -512,7 +525,7 @@ class Response {
 
 
 /**
- * Abstraction of UrlFectchApp
+ * Abstraction of UrlFectchApp, class returned by `Endpoints.module`. Can be used for more extensibility
  * @class
  */
 class Endpoint {
@@ -520,8 +533,8 @@ class Endpoint {
   /**
    * Normally you'll create an instance of this class indirectly by interfacing with the API. You can retrieve this class object with call to `Endpoints.module()`;
    * @param {Object}        [base]
-   * @param {String}        [base.baseUrl] default=null
-   * @param {String|Object} [base.oauth] default=null
+   * @param {String}        [base.baseUrl] The basic url, usually with {name} that is replaced by interpolation
+   * @param {String|Object} [base.oauth] set to "{oauth='me'}" to automatically work with user's account
    * @param {Object}        [base.discovery]
    * @param {Object}        [stickies] permanent values for options
    * @param {Object}        [stickies.stickyHeaders] permanent headers for any created requests
@@ -543,12 +556,7 @@ class Endpoint {
 
     // set oauth to a basic class
     if (this.oauth === 'me') {
-      class OAUTH {
-        get token () {
-          return ScriptApp.getOAuthToken();
-        }
-      }
-      this.oauth = new OAUTH();
+      this.oauth = new Oauth();
     }
   }
 
@@ -689,7 +697,7 @@ class Endpoint {
     const r = new Endpoint(kwargs);
     return [b, r];
   }
-
 }
-const Namespace = {Endpoint, Response, Batch, Request};
+
+const Namespace = {Endpoint, Response, Batch, Request, Oauth};
 export {Namespace};
