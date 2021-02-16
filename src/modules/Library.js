@@ -500,8 +500,7 @@ class Response {
    */
   get hitRateLimit () {
     if (this.statusCode === 429) {
-      const headers = this.getAllHeaders();
-      let header_reset_at = headers['x-ratelimit-reset'];
+      let header_reset_at = this.headers['x-ratelimit-reset'];
       header_reset_at = header_reset_at.replace(" UTC", "+0000").replace(" ", "T");
       const reset_at = new Date(header_reset_at).getTime();
       const utf_now = new Date().getTime();
