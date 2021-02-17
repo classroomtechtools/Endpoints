@@ -124,7 +124,7 @@
   });
 }
 </code></pre>
-<p>Or use it to interact with Google APIs:</p>
+<p>Use it to interact with Google APIs:</p>
 <pre class="prettyprint source lang-js"><code>function myFunction () {
   // creates endpoint with oauth as &quot;me&quot;
   const endpoint = Endpoints.createGoogEndpoint('sheets', 'v4', 'spreadsheet.values', 'get');
@@ -139,13 +139,36 @@
   Logger.log(response.json);
 }
 </code></pre>
-<p>Or use it to programmatically create differenet kinds of requests:</p>
+<p>Or use it to programmatically create different kinds of requests:</p>
 <pre class="prettyprint source lang-js"><code>function myFunction () {
   const request = Endpoints.createRequest('get', 'https://example.com');
   if (condition)
     request.addQuery({s: 'searchstring'});
   else
     request.addQuery({p: 'something'});
+}
+</code></pre>
+<p>Or really get into the weeds. Looking at <a href="https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/update">reference documentation</a>, we can derive this:</p>
+<pre class="prettyprint source lang-js"><code>function myFunction () {
+
+  // build it more manually &quot;from scratch&quot; with `createRequest`
+  const request = Endpoints.createRequest('put', {
+    url: 'https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}',
+    spreadsheetId: '&lt;id>',
+    range: '&lt;range'
+  }, {
+    query: {
+      valueInputOption, 'USER_ENTERED'
+    },
+    payload: {
+      'values': [
+        [1, 2, 3]
+      ]
+    }
+  });
+
+
+  const json = request.fetch().json;
 }
 </code></pre>
 <h2>Examples</h2>
@@ -226,6 +249,34 @@ const responses = batch.fetchAll();
 Logger.log(responses.length);  // 2
 </code></pre>
 <p>You don't have to use the batch functions to create requests to the same endpoint. Any request that you can create with this library can be processed in batch mode, as long as the <code>request</code> parameter to <code>add</code> is a <code>Request</code> object.</p>
+<p>When working in batch mode, it's most convenient to add properties to the individual requests. Adding requests supports the very last parameter being an objects, whose keys are added to the request object.</p>
+<pre class="prettyprint source lang-js"><code>const batch = Endpoints.batch();
+const ids = ['&lt;id1>', '&lt;id2>'];
+    
+ids.forEach(id => {
+  const request = endpoint.httpput({
+    range: 'Sheet1!A1',
+    spreadsheetId: id
+  }, {
+    query: {
+      valueInputOption: 'RAW'
+    },
+    payload: {
+      range: 'Sheet1!A1',
+      majorDimension: 'ROWS',
+      values: [[1]]
+    }
+  }, {  // last parameter
+
+  });
+
+  batch.add({request: request});
+
+});
+    
+const responses = batch.fetchAll();
+Logger.log(responses.length);  // 2
+</code></pre>
 <h2>Notes on <code>createGoogEndpoint</code></h2>
 <p>This method accepts four parameters <code>name</code>, <code>version</code>, <code>resource</code> and <code>method</code>, and these four have to match how the Discovery Service is structured and kept. The best way to get the real values that are really needed (for now?) is to go to this <a href="https://developers.google.com/discovery/v1/reference/apis/list">try API page</a> and try to work out the exact terminology for the four parameters.</p>
 <h3>Reference for commonly-used discovery documents</h3>
@@ -240,8 +291,13 @@ Logger.log(responses.length);  // 2
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left">Admin SDK</td>
+<td style="text-align:left">Admin Directory</td>
 <td style="text-align:center">&quot;admin&quot;, &quot;directory_v1&quot;</td>
+<td style="text-align:right"><a href="https://developers.google.com/admin-sdk/directory/reference/rest">link</a></td>
+</tr>
+<tr>
+<td style="text-align:left">Admin Reports</td>
+<td style="text-align:center">&quot;admin&quot;, &quot;reports_v1&quot;</td>
 <td style="text-align:right"><a href="https://developers.google.com/admin-sdk/directory/reference/rest">link</a></td>
 </tr>
 <tr>

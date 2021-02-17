@@ -38,7 +38,7 @@ function myFunction () {
 }
 ```
 
-Or use it to interact with Google APIs:
+Use it to interact with Google APIs:
 
 ```js
 function myFunction () {
@@ -56,7 +56,7 @@ function myFunction () {
 }
 ```
 
-Or use it to programmatically create differenet kinds of requests:
+Or use it to programmatically create different kinds of requests:
 
 ```js
 function myFunction () {
@@ -67,6 +67,33 @@ function myFunction () {
     request.addQuery({p: 'something'});
 }
 ```
+
+Or really get into the weeds. Looking at [reference documentation](https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/update), we can derive this:
+
+```js
+function myFunction () {
+
+  // build it more manually "from scratch" with `createRequest`
+  const request = Endpoints.createRequest('put', {
+    url: 'https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}',
+    spreadsheetId: '<id>',
+    range: '<range'
+  }, {
+    query: {
+      valueInputOption, 'USER_ENTERED'
+    },
+    payload: {
+      'values': [
+        [1, 2, 3]
+      ]
+    }
+  });
+
+
+  const json = request.fetch().json;
+}
+```
+
 
 ## Examples
 
@@ -176,6 +203,38 @@ Logger.log(responses.length);  // 2
 
 You don't have to use the batch functions to create requests to the same endpoint. Any request that you can create with this library can be processed in batch mode, as long as the `request` parameter to `add` is a `Request` object.
 
+When working in batch mode, it's most convenient to add properties to the individual requests. Adding requests supports the very last parameter being an objects, whose keys are added to the request object.
+
+```js
+const batch = Endpoints.batch();
+const ids = ['<id1>', '<id2>'];
+    
+ids.forEach(id => {
+  const request = endpoint.httpput({
+    range: 'Sheet1!A1',
+    spreadsheetId: id
+  }, {
+    query: {
+      valueInputOption: 'RAW'
+    },
+    payload: {
+      range: 'Sheet1!A1',
+      majorDimension: 'ROWS',
+      values: [[1]]
+    }
+  }, {  // last parameter
+
+  });
+
+  batch.add({request: request});
+
+});
+    
+const responses = batch.fetchAll();
+Logger.log(responses.length);  // 2
+```
+
+
 ## Notes on `createGoogEndpoint`
 
 This method accepts four parameters `name`, `version`, `resource` and `method`, and these four have to match how the Discovery Service is structured and kept. The best way to get the real values that are really needed (for now?) is to go to this [try API page](https://developers.google.com/discovery/v1/reference/apis/list) and try to work out the exact terminology for the four parameters.
@@ -186,7 +245,8 @@ Finding these names can be tricky, which is why this table can be helpful:
 
 | Common Name | name, version | Documentation Link |
 | :---         |     :---:      |          ---: |
-| Admin SDK   | "admin", "directory_v1"     | [link](https://developers.google.com/admin-sdk/directory/reference/rest)    |
+| Admin Directory   | "admin", "directory_v1"     | [link](https://developers.google.com/admin-sdk/directory/reference/rest)    |
+| Admin Reports   | "admin", "reports_v1"     | [link](https://developers.google.com/admin-sdk/directory/reference/rest)    |
 | Sheets     | "sheets", "v4"       | [link](https://developers.google.com/sheets/api/reference/rest)      |
 
 If you, like me, have to spend a few minutes finding them, add a pull request and I'll add it to the table.

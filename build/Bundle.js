@@ -1493,7 +1493,11 @@ class Utils {
 const PRIVATE_OAUTH = Symbol('private_oauth');
 
 /**
- * Request instance. Instances of this class are created with `createRequest`
+ * Request instance. Instances of this class are created with `createRequest`. See below properties for properties and methods available
+ * @property {Object} headers - The headers passed in
+ * @property {String} method - "get" etc
+ * @property {Object} query - what was passed to you
+ * @property {Object} pathParams - an object that holds as keys/values what was passed in the second parameter, if any
  */
 class Request {
 
