@@ -207,9 +207,10 @@ When working in batch mode, it's most convenient to add properties to the indivi
 
 ```js
 const batch = Endpoints.batch();
-const ids = ['<id1>', '<id2>'];
+// we want to keep name on the request object itself:
+const items = [{id: '<id1>', name: 'a'}, {id: '<id2>', name: 'b'}];
     
-ids.forEach(id => {
+ids.forEach([id, name] => {
   const request = endpoint.httpput({
     range: 'Sheet1!A1',
     spreadsheetId: id
@@ -223,15 +224,15 @@ ids.forEach(id => {
       values: [[1]]
     }
   }, {  // last parameter
-
+    name  // <— it'll be on the request object
   });
 
   batch.add({request: request});
-
 });
-    
-const responses = batch.fetchAll();
-Logger.log(responses.length);  // 2
+
+batch.fetchAll().forEach(request => {
+  Logger.log(request.name);  // name is here
+});
 ```
 
 
