@@ -35,12 +35,11 @@ const responses = bacth.fetchAll();
    */
   add ({request}={}) {
     Enforce.named(arguments, {request: Namespace.Request}, 'Batch#add');
-    const {params} = request.url_params({embedUrl: true});
-    this.queue.push(params);
+    this.queue.push(request);
   }
 
   /**
-   * Use UrlFetchApp to reach out to the internet. Returns Response objects in same order as requests. You can use `json` property to get the data result, but is not done for you automatically. Note that Response objects also have `request` property, which can be used to debug if necessary.
+   * Use UrlFetchApp to reach out to the internet. Returns Response objects in same order as requests. You can use `json` property to get the data result, but is not done for you automatically. Note that Response objects also have `request` property, which can be used to debug, or rebuild the original request, if necessary.
    * @return {Response[]}
    * @example
 // Make list of response jsons
@@ -50,10 +49,18 @@ batch.fetchAll().map(response => response.json);
 batch.fetchAll().map(response => response.request.url);
    */
   fetchAll () {
-    return UrlFetchApp.fetchAll(this.queue).map( (response, idx) => {
-      const requestObject = this.queue[idx];
-      return new Response({response, requestObject});
-    });
+    return UrlFetchApp.fetchAll(
+      this.queue.map(
+        request => {
+          const {params} = request.getParams({embedUrl: true});
+          return params;
+        }
+      )
+    ).map( (response, idx) => {
+        const request = this.queue[idx];
+        return new Response({response, request});
+      });
+    this.queue = [];
   }
 }
 
@@ -72,7 +79,7 @@ class DiscoveryCache {
       let data = this.cache.get(key);
       let ret = null;
       if (data) {
-        console.log({key, fromCache: true})
+        console.log({key, fromCache: true});
         return data;
       }
       data = this.getEndpoint(name, version).json;
@@ -100,7 +107,7 @@ class DiscoveryCache {
       }
 
       this.cache.put(key, ret, 21600);  // max is 6 hours
-      console.log({key, fromCache: false})
+      console.log({key, fromCache: false});
       return ret;
     }
 
@@ -222,7 +229,7 @@ Logger.log(response.json);
       response = null;
       throw new Error(e.message, {url, requestObject});
     }
-    let resp = new Response({response, requestObject});
+    let resp = new Response({response, request: this});
 
     // auto-detect ratelimits, try again
     if (resp.hitRateLimit) {
@@ -396,10 +403,10 @@ class Response {
    * @param {Object} param.response
    * @param {Object} param.requestObject
    */
-  constructor ({response=null, requestObject=null}={}) {
-    Enforce.named(arguments, {response: 'object', requestObject: 'object'}, 'Response#constructor');
+  constructor ({response=null, request=null}={}) {
+    Enforce.named(arguments, {response: 'object', request: Namespace.Request}, 'Response#constructor');
     this.response = response;
-    this.requestObject = requestObject;
+    this.request = request;
 
     // By default, if response cannot be parsed to json we'll send back a json with error information instead of throwing error
     this.catchUnparseableJsonResponse = true;
@@ -518,7 +525,7 @@ class Response {
    * @return {HTTPResponse}
    */
   getRequest () {
-    return this.requestObject;
+    return this.request.getParams().params;
   }
 }
 
@@ -580,7 +587,7 @@ class Endpoint {
    * @param {Any}    [advanced.mixin] mixin pattern on this object
    * @return {Request}
    */
-  createRequest (method, {url=null, ...pathParams}={}, {query={}, payload={}, headers={}}={}, {mixin=null}={}) {
+  createRequest (method, {url=null, ...pathParams}={}, {query={}, payload={}, headers={}}={}, mixin={}) {
     const options = {};
 
     // check for what it has been passed
@@ -598,6 +605,7 @@ class Endpoint {
     options.payload = {...this.stickyPayload, ...payload};
     options.query = {...this.stickyQuery, ...query};
     options.oauth = this.oauth;
+    mixin.pathParams = pathParams;
 
     return new Request(options, {mixin});
   }
@@ -611,8 +619,8 @@ class Endpoint {
    * @param {Object} [options.headers]
    * @return {Request}
    */
-  httpget ({...pathParams}={}, {...options}={}) {
-    return this.createRequest('get', pathParams, options);
+  httpget ({...pathParams}={}, {...options}={}, mixin={}) {
+    return this.createRequest('get', pathParams, options, mixin);
   }
 
   /**

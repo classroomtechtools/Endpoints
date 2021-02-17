@@ -999,7 +999,7 @@ function Test_(remote=false) {
       assert.equals({actual, expected});
     });
 
-    const sendRequest = response.requestObject;
+    const sendRequest = response.request;
     it("Response#response returns the original request", _ => {
       const actual = sendRequest;
       assert.notUndefined({actual});

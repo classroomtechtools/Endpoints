@@ -114,7 +114,7 @@ describe("http get requests to sheets v4 service, expected to fail", _ => {
     assert.equals({actual, expected});
   });
 
-  const sendRequest = response.requestObject;
+  const sendRequest = response.request;
   it("Response#response returns the original request", _ => {
     const actual = sendRequest;
     assert.notUndefined({actual});
