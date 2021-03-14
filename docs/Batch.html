@@ -96,7 +96,7 @@
 
       
         <div class="class-description">
-          <p>An object that represents a collection of requests that will be asynchronously retrieved. Use included methods <code>add</code> and <code>fetchAll</code> to interact with APIs more than one at a time.</p>
+          <p>An object that represents a collection of requests that will be asynchronously retrieved. Use included  <code>add</code> to add request objects, and then <code>fetchAll</code> which interacts with APIs concurrently. The responses will be in the same order as the requests. For more flexible usage, request objects can be passed mixin objects, which will be present on the respective response.</p>
         </div>
       
     
@@ -206,7 +206,7 @@
     
 
   <pre class="prettyprint"><code>const batch = Endpoints.batch();
-batch.add(request);  // Request
+batch.add({request});  // Request
 const responses = bacth.fetchAll();</code></pre>
 
 
@@ -351,7 +351,7 @@ const responses = bacth.fetchAll();</code></pre>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="modules_Library.js.html">modules/Library.js</a>, <a href="modules_Library.js.html#line36">line 36</a>
+          <a href="modules_Library.js.html">modules/Library.js</a>, <a href="modules_Library.js.html#line41">line 41</a>
         </li>
       </ul>
     </dd>
@@ -399,7 +399,8 @@ const responses = bacth.fetchAll();</code></pre>
 
 
   <div class="description">
-    <p>Use UrlFetchApp to reach out to the internet. Returns Response objects in same order as requests. You can use <code>json</code> property to get the data result, but is not done for you automatically. Note that Response objects also have <code>request</code> property, which can be used to debug, or rebuild the original request, if necessary.</p>
+    <p>Use UrlFetchApp to reach out to the internet. Returns Response objects in same order as requests. You need to use <code>json</code> property to get the data result. Note that Response objects also have <code>request</code> property, which can be used to debug, or rebuild the original request, if necessary. Any mixin classes that are used on request creation will be available on the response object.</p>
+<p>Handles 429 errors smartly. Instead of trying again with all of the requests, its subsequent attempt will only fetch those that had 429. Note that the current algorithm assumes these batch requests are going to the same endpoint. TODO: better algorithm not assuming same endpoint</p>
   </div>
 
 
@@ -442,7 +443,7 @@ const responses = bacth.fetchAll();</code></pre>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="modules_Library.js.html">modules/Library.js</a>, <a href="modules_Library.js.html#line51">line 51</a>
+          <a href="modules_Library.js.html">modules/Library.js</a>, <a href="modules_Library.js.html#line68">line 68</a>
         </li>
       </ul>
     </dd>
@@ -482,6 +483,17 @@ batch.fetchAll().map(response => response.json);</code></pre>
 
   <pre class="prettyprint"><code>// Make list of original request urls
 batch.fetchAll().map(response => response.request.url);</code></pre>
+
+
+  <pre class="prettyprint"><code>// request with mixins
+const req = Endpoints.createRequest('get', {}, {
+  param: 1
+});
+const batch = Endpoints.batch();
+batch.add({request: req});
+const responses = batch.fetchAll();
+const response = responses[0];
+Logger.log(response.param);  // 1</code></pre>
 
 
   </div>

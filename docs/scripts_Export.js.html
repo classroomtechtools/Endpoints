@@ -109,14 +109,15 @@ function module () {
  * @param {Object} [options.query] - query parameters
  * @param {Object} [options.payload] - payload
  * @param {Object} [options.headers] - headers
+ * @param {Object} [mixins] - Properties that will be available on the response
  * @throws Insufficient parameters if urlObj not built correctly
  * @return {Request}
  */
-function createRequest (name, urlObj, options) {
+function createRequest (name, urlObj, options, mixins={}) {
   const {Enforce, Namespace} = Import;
   Enforce.positional(arguments, {name: '!string', urlObj: '!object', options: 'object'});
   const endpoint = new Namespace.Endpoint();
-  return endpoint.createRequest(name, urlObj, options);
+  return endpoint.createRequest(name, urlObj, options, mixins);
 }
 
 

@@ -1325,7 +1325,7 @@ class Oauth {
 
 
 /**
- * An object that represents a collection of requests that will be asynchronously retrieved. Use included methods `add` and `fetchAll` to interact with APIs more than one at a time.
+ * An object that represents a collection of requests that will be asynchronously retrieved. Use included  `add` to add request objects, and then `fetchAll` which interacts with APIs concurrently. The responses will be in the same order as the requests. For more flexible usage, request objects can be passed mixin objects, which will be present on the respective response.
  * @class
  */
 class Batch {
@@ -1334,11 +1334,16 @@ class Batch {
    * @return {Batch}
    * @example
 const batch = Endpoints.batch();
-batch.add(request);  // Request
+batch.add({request});  // Request
 const responses = bacth.fetchAll();
    */
   constructor () {
+    this.reset();
+  }
+
+  reset () {
     this.queue = [];
+    this._after = [];
   }
 
   /**
@@ -1351,7 +1356,9 @@ const responses = bacth.fetchAll();
   }
 
   /**
-   * Use UrlFetchApp to reach out to the internet. Returns Response objects in same order as requests. You can use `json` property to get the data result, but is not done for you automatically. Note that Response objects also have `request` property, which can be used to debug, or rebuild the original request, if necessary.
+   * Use UrlFetchApp to reach out to the internet. Returns Response objects in same order as requests. You need to use `json` property to get the data result. Note that Response objects also have `request` property, which can be used to debug, or rebuild the original request, if necessary. Any mixin classes that are used on request creation will be available on the response object.
+
+   Handles 429 errors smartly. Instead of trying again with all of the requests, its subsequent attempt will only fetch those that had 429. Note that the current algorithm assumes these batch requests are going to the same endpoint. TODO: better algorithm not assuming same endpoint
    * @return {Response[]}
    * @example
 // Make list of response jsons
@@ -1359,19 +1366,66 @@ batch.fetchAll().map(response => response.json);
    * @example
 // Make list of original request urls
 batch.fetchAll().map(response => response.request.url);
+   * @example
+// request with mixins
+const req = Endpoints.createRequest('get', {}, {
+  param: 1
+});
+const batch = Endpoints.batch();
+batch.add({request: req});
+const responses = batch.fetchAll();
+const response = responses[0];
+Logger.log(response.param);  // 1
    */
   fetchAll () {
-    return UrlFetchApp.fetchAll(
-      this.queue.map(
-        request => {
-          const {params} = request.getParams({embedUrl: true});
-          return params;
+    const obj = {retry: 0, start: 0, stoppedAt: this.queue.length};
+    let collated = [];
+
+    do {
+      if (obj.stoppedAt < this.queue.length) {
+        obj.start = obj.stoppedAt;
+        obj.stoppedAt = this.queue.length;
+        Logger.log('429 hit rate encountered in Batch#fetchAll, sleeping for ' + (obj.retry / 1000) + ' seconds.');
+        Utilities.sleep(obj.retry);
+      }
+
+      if (obj.start > 0) Logger.log(obj.start);
+      const responses = UrlFetchApp.fetchAll(
+        this.queue.slice(obj.start).map(
+          request => {
+            const {params} = request.getParams({embedUrl: true});
+            //Logger.log(params);
+            return params;
+          }
+        )
+      ).map( (response, idx) => {
+          const request = this.queue[idx];
+          const response_ = new Response({response, request});
+          if (response_.statusCode === 429) {
+            obj.retry = Math.max(obj.retry, response_.x_ratelimit_reset);  //
+            obj.stoppedAt = Math.min(obj.stoppedAt, idx);
+            return null;
+          }
+          return response_;
+        });
+
+        //process
+        const nulled = responses.indexOf(null);
+        if (nulled === -1) {
+          Array.prototype.push.apply(collated, responses);
+          obj.rety = 0;
+          obj.start = 0;
+        } else {
+          Array.prototype.push.apply(collated, responses.slice(0, nulled));
         }
-      )
-    ).map( (response, idx) => {
-        const request = this.queue[idx];
-        return new Response({response, request});
-      });
+
+    } while (obj.retry > 0);
+
+    // add any .after
+    Array.prototype.push.apply(collated, this._after);
+    this.reset();
+
+    return collated;
   }
 }
 
@@ -1817,17 +1871,22 @@ class Response {
     return this.ok;
   }
 
+  get x_ratelimit_reset () {
+    let header_reset_at = this.headers['x-ratelimit-reset'];
+    header_reset_at = header_reset_at.replace(" UTC", "+0000").replace(" ", "T");
+    const reset_at = new Date(header_reset_at).getTime();
+    const utf_now = new Date().getTime();
+    return reset_at - utf_now + 1;
+  }
+
   /**
    * Returns false if the response is anything except `429`. Returns true only after sleeping for how many milliseconds as indicated in the `x-ratelimit-reset` header. Can be used to retry. Used internally by `Request#fetch` to avoid rate limitations.
    */
   get hitRateLimit () {
     if (this.statusCode === 429) {
-      let header_reset_at = this.headers['x-ratelimit-reset'];
-      header_reset_at = header_reset_at.replace(" UTC", "+0000").replace(" ", "T");
-      const reset_at = new Date(header_reset_at).getTime();
-      const utf_now = new Date().getTime();
-      const milliseconds = reset_at - utf_now + 10;
+      const milliseconds = this.x_ratelimit_reset;
       if (milliseconds > 0) {
+        Logger.log('429 rate limit encountered in fetch, sleeping for ' + (milliseconds / 1000) + ' seconds');
         Utilities.sleep(milliseconds);
       }
       return true;
@@ -1899,7 +1958,7 @@ class Endpoint {
    * @param {Object} [options.payload]
    * @param {Object} [options.headers]
    * @param {Object} [advanced]
-   * @param {Any}    [advanced.mixin] mixin pattern on this object
+   * @param {Any}    [advanced.mixin] mixin pattern on response object
    * @return {Request}
    */
   createRequest (method, {url=null, ...pathParams}={}, {query={}, payload={}, headers={}}={}, mixin={}) {

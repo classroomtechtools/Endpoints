@@ -251,9 +251,10 @@ Logger.log(responses.length);  // 2
 <p>You don't have to use the batch functions to create requests to the same endpoint. Any request that you can create with this library can be processed in batch mode, as long as the <code>request</code> parameter to <code>add</code> is a <code>Request</code> object.</p>
 <p>When working in batch mode, it's most convenient to add properties to the individual requests. Adding requests supports the very last parameter being an objects, whose keys are added to the request object.</p>
 <pre class="prettyprint source lang-js"><code>const batch = Endpoints.batch();
-const ids = ['&lt;id1>', '&lt;id2>'];
+// we want to keep name on the request object itself:
+const items = [{id: '&lt;id1>', name: 'a'}, {id: '&lt;id2>', name: 'b'}];
     
-ids.forEach(id => {
+ids.forEach([id, name] => {
   const request = endpoint.httpput({
     range: 'Sheet1!A1',
     spreadsheetId: id
@@ -267,15 +268,15 @@ ids.forEach(id => {
       values: [[1]]
     }
   }, {  // last parameter
-
+    name  // &lt;— it'll be on the request object
   });
 
   batch.add({request: request});
-
 });
-    
-const responses = batch.fetchAll();
-Logger.log(responses.length);  // 2
+
+batch.fetchAll().forEach(request => {
+  Logger.log(request.name);  // name is here
+});
 </code></pre>
 <h2>Notes on <code>createGoogEndpoint</code></h2>
 <p>This method accepts four parameters <code>name</code>, <code>version</code>, <code>resource</code> and <code>method</code>, and these four have to match how the Discovery Service is structured and kept. The best way to get the real values that are really needed (for now?) is to go to this <a href="https://developers.google.com/discovery/v1/reference/apis/list">try API page</a> and try to work out the exact terminology for the four parameters.</p>
