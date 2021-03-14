@@ -291,7 +291,7 @@ Logger.log(response.json);
     // auto-detect ratelimits, try again
     if (resp.hitRateLimit) {
       response = UrlFetchApp.fetch(url, requestObject);
-      resp = new Response({response, requestObject});
+      resp = new Response({response, request: this});
     }
 
     return resp;
@@ -458,7 +458,7 @@ class Response {
    * Response object, created in Request#fetch
    * @param {Object} param
    * @param {Object} param.response
-   * @param {Object} param.requestObject
+   * @param {Object} param.request
    */
   constructor ({response=null, request=null}={}) {
     Enforce.named(arguments, {response: 'object', request: Namespace.Request}, 'Response#constructor');
@@ -764,7 +764,7 @@ class Endpoint {
   static batchRequests ({...kwargs}={}) {
     const b = new Batch();
     const r = new Endpoint(kwargs);
-    return [b, r];
+    return {batch: b, request: r};
   }
 }
 
