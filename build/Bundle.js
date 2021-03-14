@@ -1561,7 +1561,7 @@ class Request {
    * @param {String} method - http method i.e. 'get' etc
    * @param {Object} headers - http headers
    * @param {Object} query - query parameters
-   * @param {Any} mixin - advanced extensibility, added to `this` as second parameter to `Object.assign`
+   * @param {Any} mixin - adds properties in mixin object to the request obj via Object.assign
    */
   constructor ({url, oauth, method='get', headers={}, payload={}, query={}}={}, {mixin=null}) {
     Enforce.named(arguments, {url: '!string', oauth: '!any', method: 'string', headers: 'object', payload: 'object', query: 'object', mixin: 'any'});
@@ -1956,7 +1956,7 @@ class Endpoint {
    * @param {Object} [options.payload]
    * @param {Object} [options.headers]
    * @param {Object} [advanced]
-   * @param {Any}    [advanced.mixin] mixin pattern on response object
+   * @param {Any}    [advanced.mixin] mixin pattern on request object
    * @return {Request}
    */
   createRequest (method, {url=null, ...pathParams}={}, {query={}, payload={}, headers={}}={}, mixin={}) {
