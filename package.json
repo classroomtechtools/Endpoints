@@ -28,7 +28,7 @@
     "clasp:login": "clasp login",
     "clasp:logout": "clasp logout",
     "clasp:logs": "clasp logs",
-    "clasp:push": "npm run bundle && clasp push",
+    "clasp:push": "clasp push",
     "clasp:tests": "clasp run tests"
   },
   "devDependencies": {

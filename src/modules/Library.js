@@ -77,12 +77,10 @@ Logger.log(response.param);  // 1
         Utilities.sleep(obj.retry);
       }
 
-      if (obj.start > 0) Logger.log(obj.start);
       const responses = UrlFetchApp.fetchAll(
         this.queue.slice(obj.start).map(
           request => {
             const {params} = request.getParams({embedUrl: true});
-            //Logger.log(params);
             return params;
           }
         )
