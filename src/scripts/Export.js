@@ -158,12 +158,14 @@ function post (url, options={}) {
 
 
 /**
- * Returns object which you can use add requests, eventually calling fetchAll to use UrlFetchApp.fetchAll to execute concurrently
+ * Returns object which you can use add requests. Then you can either use fetchAll to get all the responses, or iterate over the instance, respecting the passed in rate limit
+ * @param {Number} [rateLimit=50]
+ * @param {Date} [lastExecutionDate=null]
  * @return {Batch}
  */
-function batch () {
+function batch (rateLimit=50, lastExecutionDate=null) {
   const {Namespace} = Import;
-  return new Namespace.Batch();
+  return new Namespace.Batch({rateLimit, lastExecutionDate});
 }
 
 /**

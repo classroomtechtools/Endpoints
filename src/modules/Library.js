@@ -13,25 +13,59 @@ class Oauth {
 
 
 /**
- * An object that represents a collection of requests that will be asynchronously retrieved. Use included  `add` to add request objects, and then `fetchAll` which interacts with APIs concurrently. The responses will be in the same order as the requests. For more flexible usage, request objects can be passed mixin objects, which will be present on the respective response.
+ * An object that represents a collection of requests that will be asynchronously retrieved. Use `add` to add request objects, and then `fetchAll` which interacts with APIs concurrently and return them all. The responses will be in the same order as the requests.
+ *
+ * You can also iterate over this object with `for … of` syntax, and it does so by chunking the requests, passing back time to the caller to process.
+ * @example
+// create the object
+const batch = Endpoints.batch();
+
+// add request objects
+batch.add({request});  // Request
+
+// use `fetchAll` to grab them all at once
+const responses = batch.fetchAll();
+
+// get the json
+const response = responses[0];
+Logger.log(response.json);
+
+// or
+// iterate over the object and get one at a time
+for (const response of batch) {
+  Logger.logger(response.json);
+}
  * @class
  */
 class Batch {
   /**
    * Usually created with call to `Endpoints.batch`
    * @return {Batch}
+   * @param {Number} [rateLimit=50] - The maximum number, per second, that the endpoint can take before raising 429. error. (This often applies per IP address)
+   * @param {Date} [lastExecutionDate=null] - Uses this as basis for understanding how much longer it has for a second to elapse. In most cases, safest to leave as `null`
+   * @param {Boolean} [verbose=false] - set to true if you want to see messages indicating when it's sleeping in order to ensure the rate limit isn't exceeded
    * @example
 const batch = Endpoints.batch();
 batch.add({request});  // Request
-const responses = bacth.fetchAll();
+const responses = batch.fetchAll();
+const response = responses[0];
+Logger.log(response.json);
+// or
+for (const response of batch) {
+  Logger.logger(response.json);
+}
    */
-  constructor () {
-    this.reset();
+   constructor ({rateLimit=50, lastExecutionDate=null, verbose=false}={}) {
+    Enforce.named(arguments, {rateLimit: 'number', lastExecutionDate: 'any'}, 'Batch#constructor');
+    this.reset(lastExecutionDate);
+    this.rateLimit = rateLimit;
+    this.verbose = verbose;
   }
 
-  reset () {
+  reset (lastExecutionDate) {
     this.queue = [];
     this._after = [];
+    this._timing = {lastExecutionDate};
   }
 
   /**
@@ -73,7 +107,7 @@ Logger.log(response.param);  // 1
       if (obj.stoppedAt < this.queue.length) {
         obj.start = obj.stoppedAt;
         obj.stoppedAt = this.queue.length;
-        Logger.log('429 hit rate encountered in Batch#fetchAll, sleeping for ' + (obj.retry / 1000) + ' seconds.')
+        this.verbose && Logger.log('429 hit rate encountered in Batch#fetchAll, sleeping for ' + (obj.retry / 1000) + ' seconds.')
         Utilities.sleep(obj.retry);
       }
 
@@ -112,6 +146,65 @@ Logger.log(response.param);  // 1
     this.reset();
 
     return collated;
+  }
+
+  /**
+   * Respecting the rate limit (default value is low, pass higher value in constructor),
+   * fetch everything in chunks, returning each response one-by-one, making processing easier.
+   * Particularly useful if you know the rate limit (or just choose a sensible one)
+   * @name iterator
+   * @method
+   * @yields {Response}
+   * @example
+const batch = Endpoints.batch(200);  // 200 hits per second
+for (let i=0; i<10000; i++) {
+  const request = ...;
+  batch.add(request);   // add 10,000 requests
+}
+for (const response of batch) {
+  // you'll get each response one-by-one, but it'll chunk
+  // by 200, and will wait for second to expire before the next chunk
+  Logger.log(response.json);
+}
+  */
+  *[Symbol.iterator] () {
+    const size = this.rateLimit || 50,
+          oneSecond = 1000;
+    const len = this.queue.length;
+    for (let idx=0; idx<len; idx += size) {
+      const chunk = this.queue.slice(idx, idx + size);
+      const lastTime = this._timing.lastExecutionDate || new Date(0), now = new Date();
+      const delta = now.getTime() - lastTime.getTime();
+      if ( delta < oneSecond ) {
+        verbose && Logger.log("Sleeping for " + ((oneSecond - delta) / 1000) + " seconds to avoid rate limit of " + this.rateLimit);
+        Utilities.sleep(oneSecond - delta);
+      }
+
+      // todo: abstract this a bit more, checking for 429
+      const fetchAppResponses = UrlFetchApp.fetchAll(
+        chunk.map(
+          request => {
+            const {params} = request.getParams({embedUrl: true});
+            return params;
+          }
+        )
+      );
+
+      // save for loop
+      this._timing.lastExecutionDate = new Date();
+
+      // now prepare the responses so the body can make due with them
+      const responses = fetchAppResponses.map( (response, idx) => {
+        const request = chunk[idx];
+        const response_ = new Response({response, request});
+        return response_;
+      });
+
+      // and hand back the time to the calling body
+      for (const response of responses) {
+        yield response;
+      }
+    }
   }
 }
 
@@ -572,7 +665,7 @@ class Response {
     if (this.statusCode === 429) {
       const milliseconds = this.x_ratelimit_reset;
       if (milliseconds > 0) {
-        Logger.log('429 rate limit encountered in fetch, sleeping for ' + (milliseconds / 1000) + ' seconds')
+        this.verbose && Logger.log('429 rate limit encountered in fetch, sleeping for ' + (milliseconds / 1000) + ' seconds')
         Utilities.sleep(milliseconds);
       }
       return true;
