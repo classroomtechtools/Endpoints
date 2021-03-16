@@ -102,7 +102,6 @@
 <p>Install:</p>
 <ul>
 <li>Library ID: <code>1WovLPVqVjZxkxkgCNgI3S_A3eDsX3DWOAoetZgRGW1JpGQ_9TK25y7mB</code></li>
-<li>Project ID: <code>MOwaCM3sJzFttpUe7GAFibvD8R0iiSsw_</code></li>
 </ul>
 <p>Use instead of <code>UrlFetchApp.fetch</code>:</p>
 <pre class="prettyprint source lang-js"><code>function myFunction () {
@@ -246,7 +245,9 @@ ids.forEach(id => {
 });
     
 const responses = batch.fetchAll();
-Logger.log(responses.length);  // 2
+for (const response of responses) {
+  Logger.log(response.json);
+}
 </code></pre>
 <p>You don't have to use the batch functions to create requests to the same endpoint. Any request that you can create with this library can be processed in batch mode, as long as the <code>request</code> parameter to <code>add</code> is a <code>Request</code> object.</p>
 <p>When working in batch mode, it's most convenient to add properties to the individual requests. Adding requests supports the very last parameter being an objects, whose keys are added to the request object.</p>
@@ -278,6 +279,31 @@ batch.fetchAll().forEach(request => {
   Logger.log(request.name);  // name is here
 });
 </code></pre>
+<h3>Batch mode: Bring on the heavy</h3>
+<p>Above, we see that this library allows the developer to create request objects that interact with APIs. You can make two calls at once. But what about if you have lots of API calls to make, like 1000s of them? Maybe you want all your students from an SIS on a google spreadsheet, or maybe you want to get a bunch of calendar event info for an event.</p>
+<p>If you were to do this with <code>UrlFetchApp.fetch</code> you'll probably run out of execution time. That's why batch mode is so useful, as you get into the fast territory.</p>
+<p>However, when you get to be that efficient, API endpoints always have rate limitations that a program needs to respect. You get a <code>429</code> error when you've gone too fast, and then you have to wait until you can try again. (It's annoying but necessary to ensure scalability.) That's a pain to program, but this library abstract that away from you … with an iterator!</p>
+<p>Look how easy it is to go through 1000s of API calls:</p>
+<p>Suppose that your API for news articles has an <code>id</code> for the path parameter, and you want to get the first 1000 articles. Let's build it:</p>
+<pre class="prettyprint source lang-js"><code>const batch = Endpoints.batch(50);   // 50 is default 
+for (let id= 1; id &lt;= 1000; id++) {
+  const request = Endpoints.createRequest('get', {id});
+  batch.add({request});
+}
+</code></pre>
+<p>At this point, if you were to just do <code>batch.fetchAll()</code> it would attempt to download all 1000 articles, and wouldn't give up until it was done. Then you could do what you needed with those articles.</p>
+<p>Instead, let's download them in chunks, passing time back to you every now and again, so that you can do the necessary processing. Then it can try and get the next chunk for you. That way, it's easier for the library to juggle the huge number of requests as it's inserting a nice breathing space for the rate limitation to &quot;reset.&quot;</p>
+<p>We can do that with an <strong>iterator</strong>!</p>
+<pre class="prettyprint source lang-js"><code>
+for (const response of batch) {
+  Logger.log(response.json);
+}
+</code></pre>
+<p>The above is a bit magical and doesn't show you all the stuff happening underneath, but it's actually calling <code>fetchAll</code> for articles <code>50</code> at a time (the default rate limit, but you can set it higher), and then spits them out to you one at a time.</p>
+<p>That's it!</p>
+<blockquote>
+<p>While this iterator pattern does its best not to cross the passed-in rate limitation, if a rate limit is encountered anyway, it is also handled for you. First it pauses for as long as the response code tells it to, and then does a manual round trip, returning that response.</p>
+</blockquote>
 <h2>Notes on <code>createGoogEndpoint</code></h2>
 <p>This method accepts four parameters <code>name</code>, <code>version</code>, <code>resource</code> and <code>method</code>, and these four have to match how the Discovery Service is structured and kept. The best way to get the real values that are really needed (for now?) is to go to this <a href="https://developers.google.com/discovery/v1/reference/apis/list">try API page</a> and try to work out the exact terminology for the four parameters.</p>
 <h3>Reference for commonly-used discovery documents</h3>

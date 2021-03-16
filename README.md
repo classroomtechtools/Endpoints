@@ -13,7 +13,6 @@ See the [documentation](https://classroomtechtools.github.io/Endpoints/).
 Install:
 
 - Library ID: `1WovLPVqVjZxkxkgCNgI3S_A3eDsX3DWOAoetZgRGW1JpGQ_9TK25y7mB`
-- Project ID: `MOwaCM3sJzFttpUe7GAFibvD8R0iiSsw_`
 
 Use instead of `UrlFetchApp.fetch`:
 
@@ -198,7 +197,9 @@ ids.forEach(id => {
 });
     
 const responses = batch.fetchAll();
-Logger.log(responses.length);  // 2
+for (const response of responses) {
+  Logger.log(response.json);
+}
 ```
 
 You don't have to use the batch functions to create requests to the same endpoint. Any request that you can create with this library can be processed in batch mode, as long as the `request` parameter to `add` is a `Request` object.
@@ -235,6 +236,44 @@ batch.fetchAll().forEach(request => {
 });
 ```
 
+### Batch mode: Bring on the heavy
+
+Above, we see that this library allows the developer to create request objects that interact with APIs. You can make two calls at once. But what about if you have lots of API calls to make, like 1000s of them? Maybe you want all your students from an SIS on a google spreadsheet, or maybe you want to get a bunch of calendar event info for an event.
+
+If you were to do this with `UrlFetchApp.fetch` you'll probably run out of execution time. That's why batch mode is so useful, as you get into the fast territory.
+
+However, when you get to be that efficient, API endpoints always have rate limitations that a program needs to respect. You get a `429` error when you've gone too fast, and then you have to wait until you can try again. (It's annoying but necessary to ensure scalability.) That's a pain to program, but this library abstract that away from you … with an iterator!
+
+Look how easy it is to go through 1000s of API calls:
+
+Suppose that your API for news articles has an `id` for the path parameter, and you want to get the first 1000 articles. Let's build it:
+
+```js
+const batch = Endpoints.batch(50);   // 50 is default 
+for (let id= 1; id <= 1000; id++) {
+  const request = Endpoints.createRequest('get', {id});
+  batch.add({request});
+}
+```
+
+At this point, if you were to just do `batch.fetchAll()` it would attempt to download all 1000 articles, and wouldn't give up until it was done. Then you could do what you needed with those articles.
+
+Instead, let's download them in chunks, passing time back to you every now and again, so that you can do the necessary processing. Then it can try and get the next chunk for you. That way, it's easier for the library to juggle the huge number of requests as it's inserting a nice breathing space for the rate limitation to "reset."
+
+We can do that with an **iterator**!
+
+```js
+
+for (const response of batch) {
+  Logger.log(response.json);
+}
+```
+
+The above is a bit magical and doesn't show you all the stuff happening underneath, but it's actually calling `fetchAll` for articles `50` at a time (the default rate limit, but you can set it higher), and then spits them out to you one at a time.
+
+That's it!
+
+>While this iterator pattern does its best not to cross the passed-in rate limitation, if a rate limit is encountered anyway, it is also handled for you. First it pauses for as long as the response code tells it to, and then does a manual round trip, returning that response.
 
 ## Notes on `createGoogEndpoint`
 
