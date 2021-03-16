@@ -158,7 +158,7 @@ function post (url, options={}) {
 
 
 /**
- * Returns object which you can use add requests. Then you can either use fetchAll to get all the responses, or iterate over the instance, respecting the passed in rate limit
+ * Returns object on which you can use build batch request. The method {@link Batch#add} can be used to add requests to the queue. The method {@link Batch#fetchAll} is available which returns array of responses. Iteration over the instance is also possible. Rate limitation are either avoided, or handled.
  * @param {Number} [rateLimit=50]
  * @param {Date} [lastExecutionDate=null]
  * @return {Batch}

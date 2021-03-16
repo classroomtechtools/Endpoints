@@ -1325,18 +1325,43 @@ class Oauth {
 
 
 /**
- * An object that represents a collection of requests that will be asynchronously retrieved. Use included  `add` to add request objects, and then `fetchAll` which interacts with APIs concurrently. The responses will be in the same order as the requests. For more flexible usage, request objects can be passed mixin objects, which will be present on the respective response.
+ * An object that represents a collection of requests that will be asynchronously retrieved. Use `add` to add request objects, and then `fetchAll` which interacts with APIs concurrently and return them all. The responses will be in the same order as the requests.
+ *
+ * You can also iterate over this object with `for … of` syntax, and it does so by chunking the requests, passing back time to the caller to process.
+ * @example
+// create the object
+const batch = Endpoints.batch();
+
+// add request objects
+batch.add({request});  // Request
+
+// use `fetchAll` to grab them all at once
+const responses = batch.fetchAll();
+
+// get the json
+const response = responses[0];
+Logger.log(response.json);
+
+// or
+// iterate over the object and get one at a time
+for (const response of batch) {
+  Logger.logger(response.json);
+}
  * @class
  */
 class Batch {
   /**
    * Usually created with call to `Endpoints.batch`
    * @return {Batch}
-   * @param {Number} [rateLimit=60] - The maximum number, per second, that the endpoint can take before raising 429. error. (This often applies per IP address)
+   * @param {Number} [rateLimit=50] - The maximum number, per second, that the endpoint can take before raising 429. error. (This often applies per IP address)
+   * @param {Date} [lastExecutionDate=null] - Uses this as basis for understanding how much longer it has for a second to elapse. In most cases, safest to leave as `null`
+   * @param {Boolean} [verbose=false] - set to true if you want to see messages indicating when it's sleeping in order to ensure the rate limit isn't exceeded
    * @example
 const batch = Endpoints.batch();
 batch.add({request});  // Request
 const responses = batch.fetchAll();
+const response = responses[0];
+Logger.log(response.json);
 // or
 for (const response of batch) {
   Logger.logger(response.json);
@@ -1439,7 +1464,9 @@ Logger.log(response.param);  // 1
    * Respecting the rate limit (default value is low, pass higher value in constructor),
    * fetch everything in chunks, returning each response one-by-one, making processing easier.
    * Particularly useful if you know the rate limit (or just choose a sensible one)
-   * @returns {Iterable}
+   * @name iterator
+   * @method
+   * @yields {Response}
    * @example
 const batch = Endpoints.batch(200);  // 200 hits per second
 for (let i=0; i<10000; i++) {
@@ -1451,18 +1478,18 @@ for (const response of batch) {
   // by 200, and will wait for second to expire before the next chunk
   Logger.log(response.json);
 }
-   */
+  */
   *[Symbol.iterator] () {
-    const size = this.rateLimit || 60,
+    const size = this.rateLimit || 50,
           oneSecond = 1000;
     const len = this.queue.length;
-    for (let idx=0; idx<len; idx += size) {
+    for (let idx=0; idx < len; idx += size) {
       const chunk = this.queue.slice(idx, idx + size);
-      const lastTime = this._timing.lastExecutionDate || new Date(0), now = new Date();
+      const lastTime = this._timing.lastExecutionDate || new Date(9999999999999), now = new Date();
       const delta = now.getTime() - lastTime.getTime();
-      if ( delta < oneSecond ) {
-        verbose && Logger.log("Sleeping for " + ((oneSecond - delta) / 1000) + " seconds to avoid rate limit of " + this.rateLimit);
-        Utilities.sleep(oneSecond - delta);
+      if ( delta < oneSecond && delta > 0 ) {
+        this.verbose && Logger.log("Sleeping for " + ((oneSecond - delta) / 1000) + " seconds to avoid rate limit of " + this.rateLimit);
+        Utilities.sleep(oneSecond - delta + 10);
       }
 
       // todo: abstract this a bit more, checking for 429
@@ -1492,6 +1519,26 @@ for (const response of batch) {
     }
   }
 }
+
+/**
+ * @name Batch#iterator
+ * @method
+ * @memberOf Batch
+ # @description   Respecting the rate limit (default value is low, pass higher value in constructor), fetch everything in chunks, returning each response one-by-one, making processing easier. Particularly useful if you know the rate limit (or just choose a sensible one)
+ * @yields {Response}
+ * @example
+const batch = Endpoints.batch(200);  // 200 hits per second
+for (let i=0; i<10000; i++) {
+  const request = ...;
+  batch.add(request);   // add 10,000 requests
+}
+for (const response of batch) {
+  // you'll get each response one-by-one, but it'll chunk
+  // by 200, and will wait for second to expire before the next chunk
+  Logger.log(response.json);
+}
+ */
+
 
 
 /**

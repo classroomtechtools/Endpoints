@@ -107,7 +107,7 @@ Logger.log(response.param);  // 1
       if (obj.stoppedAt < this.queue.length) {
         obj.start = obj.stoppedAt;
         obj.stoppedAt = this.queue.length;
-        this.verbose && Logger.log('429 hit rate encountered in Batch#fetchAll, sleeping for ' + (obj.retry / 1000) + ' seconds.')
+        this.verbose && Logger.log('429 hit rate encountered in Batch#fetchAll, sleeping for ' + (obj.retry / 1000) + ' seconds.');
         Utilities.sleep(obj.retry);
       }
 
@@ -171,13 +171,13 @@ for (const response of batch) {
     const size = this.rateLimit || 50,
           oneSecond = 1000;
     const len = this.queue.length;
-    for (let idx=0; idx<len; idx += size) {
+    for (let idx=0; idx < len; idx += size) {
       const chunk = this.queue.slice(idx, idx + size);
-      const lastTime = this._timing.lastExecutionDate || new Date(0), now = new Date();
+      const lastTime = this._timing.lastExecutionDate || new Date(9999999999999), now = new Date();
       const delta = now.getTime() - lastTime.getTime();
-      if ( delta < oneSecond ) {
-        verbose && Logger.log("Sleeping for " + ((oneSecond - delta) / 1000) + " seconds to avoid rate limit of " + this.rateLimit);
-        Utilities.sleep(oneSecond - delta);
+      if ( delta < oneSecond && delta > 0 ) {
+        this.verbose && Logger.log("Sleeping for " + ((oneSecond - delta) / 1000) + " seconds to avoid rate limit of " + this.rateLimit);
+        Utilities.sleep(oneSecond - delta + 10);
       }
 
       // todo: abstract this a bit more, checking for 429
@@ -207,6 +207,26 @@ for (const response of batch) {
     }
   }
 }
+
+/**
+ * @name Batch#iterator
+ * @method
+ * @memberOf Batch
+ # @description   Respecting the rate limit (default value is low, pass higher value in constructor), fetch everything in chunks, returning each response one-by-one, making processing easier. Particularly useful if you know the rate limit (or just choose a sensible one)
+ * @yields {Response}
+ * @example
+const batch = Endpoints.batch(200);  // 200 hits per second
+for (let i=0; i<10000; i++) {
+  const request = ...;
+  batch.add(request);   // add 10,000 requests
+}
+for (const response of batch) {
+  // you'll get each response one-by-one, but it'll chunk
+  // by 200, and will wait for second to expire before the next chunk
+  Logger.log(response.json);
+}
+ */
+
 
 
 /**

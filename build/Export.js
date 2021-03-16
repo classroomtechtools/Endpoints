@@ -158,12 +158,14 @@ function post (url, options={}) {
 
 
 /**
- * Returns object which you can use add requests, eventually calling fetchAll to use UrlFetchApp.fetchAll to execute concurrently
+ * Returns object on which you can use build batch request. The method {@link Batch#add} can be used to add requests to the queue. The method {@link Batch#fetchAll} is available which returns array of responses. Iteration over the instance is also possible. Rate limitation are either avoided, or handled.
+ * @param {Number} [rateLimit=50]
+ * @param {Date} [lastExecutionDate=null]
  * @return {Batch}
  */
-function batch () {
+function batch (rateLimit=50, lastExecutionDate=null) {
   const {Namespace} = Import;
-  return new Namespace.Batch();
+  return new Namespace.Batch({rateLimit, lastExecutionDate});
 }
 
 /**
