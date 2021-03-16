@@ -260,19 +260,19 @@ for (const response of batch) {
 }
   */
   *[Symbol.iterator] () {
-    const size = this.rateLimit || 50,
-          oneSecond = 1000;
-    const len = this.queue.length;
+    const len = this.queue.length, oneSecond = 1000;
+    let size = this.rateLimit || 50;
     for (let idx=0; idx &lt; len; idx += size) {
       const chunk = this.queue.slice(idx, idx + size);
-      const lastTime = this._timing.lastExecutionDate || new Date(9999999999999), now = new Date();
+      const lastTime = this._timing.lastExecutionDate || new Date(9999999999999),
+            now = new Date();
       const delta = now.getTime() - lastTime.getTime();
       if ( delta &lt; oneSecond &amp;&amp; delta > 0 ) {
-        this.verbose &amp;&amp; Logger.log("Sleeping for " + ((oneSecond - delta) / 1000) + " seconds to avoid rate limit of " + this.rateLimit);
-        Utilities.sleep(oneSecond - delta + 10);
+        const sleep = (oneSecond - delta) * 1.5;
+        this.verbose &amp;&amp; Logger.log("Sleeping for " + sleep + " seconds to avoid rate limit of " + this.rateLimit);
+        Utilities.sleep(sleep);
       }
 
-      // todo: abstract this a bit more, checking for 429
       const fetchAppResponses = UrlFetchApp.fetchAll(
         chunk.map(
           request => {
@@ -292,9 +292,27 @@ for (const response of batch) {
         return response_;
       });
 
-      // and hand back the time to the calling body
+      // hand back the time to the calling body
+      // but have to check for rate limits in any case
+      const millisecondsSlept = 0;
       for (const response of responses) {
-        yield response;
+        const {hitRateLimit, milliseconds} = response.checkRateLimit;
+        if (hitRateLimit) {
+          const remainingMilliseconds = milliseconds - millisecondsSlept;
+          if (remainingMilliseconds > 0) {
+            // sleep only if we haven't already slept for that long
+            Utilities.sleep(remainingMilliseconds);
+            millisecondsSlept += remainingMilliseconds;
+          }
+
+          // convert the response into the original request, make new response object
+          const request = response.request;
+          const {url, params} = request.url_params();
+          const resp = UrlFetchApp.fetch(url, params);
+          yield new Response({response: resp, request});
+        } else {
+          yield response;
+        }
       }
     }
   }
