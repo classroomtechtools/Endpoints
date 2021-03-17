@@ -1514,22 +1514,22 @@ for (const response of batch) {
 
       // hand back the time to the calling body
       // but have to check for rate limits in any case
-      const millisecondsSlept = 0;
+      // hand back the time to the calling body
+      // but have to check for rate limits in any case
+      let millisecondsSlept = 0;
       for (const response of responses) {
         const {hitRateLimit, milliseconds} = response.checkRateLimit;
         if (hitRateLimit) {
           const remainingMilliseconds = milliseconds - millisecondsSlept;
           if (remainingMilliseconds > 0) {
-            // sleep only if we haven't already slept for that long
+            // sleep only if we haven't already slept for that long yet
             Utilities.sleep(remainingMilliseconds);
             millisecondsSlept += remainingMilliseconds;
           }
 
           // convert the response into the original request, make new response object
           const request = response.request;
-          const {url, params} = request.url_params();
-          const resp = UrlFetchApp.fetch(url, params);
-          yield new Response({response: resp, request});
+          yield request.fetch();  // urlfetchapp, which can handle 429 as well
         } else {
           yield response;
         }
