@@ -788,6 +788,15 @@ class Response {
     return reset_at - utf_now + 1;
   }
 
+  get checkRateLimit () {
+    const hitRateLimit = this.statusCode === 429;
+    let milliseconds = 0;
+    if (hitRateLimit) {
+      milliseconds = this.x_ratelimit_reset;
+    }
+    return {hitRateLimit, milliseconds};
+  }
+
   /**
    * Returns false if the response is anything except `429`. Returns true only after sleeping for how many milliseconds as indicated in the `x-ratelimit-reset` header. Can be used to retry. Used internally by `Request#fetch` to avoid rate limitations.
    */
