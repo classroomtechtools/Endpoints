@@ -1,6 +1,6 @@
 {
   "name": "@classroomtechtools/endpoints",
-  "version": "2.4.1",
+  "version": "2.5.0",
   "repository": "https://github.com/classroomtechtools/Endpoints",
   "main": "src/modules/Endpoints.js",
   "type": "module",
