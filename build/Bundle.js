@@ -1573,7 +1573,7 @@ class DiscoveryCache {
       let data = this.cache.get(key);
       let ret = null;
       if (data) {
-        console.log({key, fromCache: true});
+        //console.log({key, fromCache: true});
         return data;
       }
       data = this.getEndpoint(name, version).json;
@@ -1601,7 +1601,7 @@ class DiscoveryCache {
       }
 
       this.cache.put(key, ret, 21600);  // max is 6 hours
-      console.log({key, fromCache: false});
+      //console.log({key, fromCache: false});
       return ret;
     }
 
