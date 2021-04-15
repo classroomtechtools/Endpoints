@@ -1,6 +1,15 @@
 import {Enforce} from '@classroomtechtools/enforce_arguments';
 import {OAuth2} from './lib/Oauth2.js';
 
+class Verbose {
+  constructor () {
+    this.verbosity = 0;
+  }
+  setVerbosity(value) {
+    this.verbosity = value;
+  }
+}
+
 /**
  * Class used for cases where oauth is send as "me", where `SciptApp.getOAuthToken` is appropriate auth. The token is actually retrieved on the call itself, rather than at endpoint creation (otherwise it might timeout)
  * @property {String} token
@@ -37,7 +46,7 @@ for (const response of batch) {
 }
  * @class
  */
-class Batch {
+class Batch extends Verbose {
   /**
    * Usually created with call to `Endpoints.batch`
    * @return {Batch}
@@ -55,11 +64,11 @@ for (const response of batch) {
   Logger.logger(response.json);
 }
    */
-   constructor ({rateLimit=50, lastExecutionDate=null, verbose=false}={}) {
+   constructor ({rateLimit=50, lastExecutionDate=null}={}) {
     Enforce.named(arguments, {rateLimit: 'number', lastExecutionDate: 'any'}, 'Batch#constructor');
+    super();
     this.reset(lastExecutionDate);
     this.rateLimit = rateLimit;
-    this.verbose = verbose;
   }
 
   reset (lastExecutionDate) {
@@ -107,7 +116,7 @@ Logger.log(response.param);  // 1
       if (obj.stoppedAt < this.queue.length) {
         obj.start = obj.stoppedAt;
         obj.stoppedAt = this.queue.length;
-        this.verbose && Logger.log('429 hit rate encountered in Batch#fetchAll, sleeping for ' + (obj.retry / 1000) + ' seconds.');
+        this.verbosity > 2 && Logger.log('429 hit rate encountered in Batch#fetchAll, sleeping for ' + (obj.retry / 1000) + ' seconds.');
         Utilities.sleep(obj.retry);
       }
 
@@ -127,17 +136,18 @@ Logger.log(response.param);  // 1
             return null;
           }
           return response_;
-        });
-
-        //process
-        const nulled = responses.indexOf(null);
-        if (nulled === -1) {
-          Array.prototype.push.apply(collated, responses);
-          obj.rety = 0;
-          obj.start = 0;
-        } else {
-          Array.prototype.push.apply(collated, responses.slice(0, nulled));
         }
+      );
+
+      //process
+      const nulled = responses.indexOf(null);
+      if (nulled === -1) {
+        Array.prototype.push.apply(collated, responses);
+        obj.rety = 0;
+        obj.start = 0;
+      } else {
+        Array.prototype.push.apply(collated, responses.slice(0, nulled));
+      }
 
     } while (obj.retry > 0);
 
@@ -177,7 +187,7 @@ for (const response of batch) {
       const delta = now.getTime() - lastTime.getTime();
       if ( delta < oneSecond && delta > 0 ) {
         const sleep = (oneSecond - delta) * 1.5;
-        this.verbose && Logger.log("Sleeping for " + sleep + " seconds to avoid rate limit of " + this.rateLimit);
+        this.verbosity > 2 && Logger.log("Sleeping for " + sleep + " seconds to avoid rate limit of " + this.rateLimit);
         Utilities.sleep(sleep);
       }
 
@@ -211,7 +221,9 @@ for (const response of batch) {
           const remainingMilliseconds = milliseconds - millisecondsSlept;
           if (remainingMilliseconds > 0) {
             // sleep only if we haven't already slept for that long yet
+            this.verbosity > 2 && Logger.log(`Hit rate limit in batch sleeping for ${remainingMilliseconds / 1000} seconds`);
             Utilities.sleep(remainingMilliseconds);
+
             millisecondsSlept += remainingMilliseconds;
           }
 
@@ -370,7 +382,7 @@ const PRIVATE_OAUTH = Symbol('private_oauth');
  * @property {Object} query - what was passed to you
  * @property {Object} pathParams - an object that holds as keys/values what was passed in the second parameter, if any
  */
-class Request {
+class Request extends Verbose {
 
   /**
    * Usually created on your behalf
@@ -384,6 +396,7 @@ class Request {
    */
   constructor ({url, oauth, method='get', headers={}, payload={}, query={}}={}, {mixin=null}) {
     Enforce.named(arguments, {url: '!string', oauth: '!any', method: 'string', headers: 'object', payload: 'object', query: 'object', mixin: 'any'});
+    super();
     this._url = url;
     this.headers = headers;
     this.payload = payload;
@@ -410,6 +423,7 @@ Logger.log(response.json);
     const {url, params: requestObject} = this.url_params({embedUrl: true});
     let response;
     try {
+      this.verbosity >= 1 && Logger.log(JSON.stringify({...requestObject, ...{time: new Date()}}, ['url', 'method', 'headers', 'time'], 2));
       response = UrlFetchApp.fetch(url, requestObject);
     } catch (e) {
       response = null;
@@ -581,16 +595,18 @@ request.url;  // https://exmaple.com?p=str
 /**
  * Response objects, created on your behalf. Contains both the actual response object returned by `UrlFetchApp` and the params object that was built and sent to `UrlFetchApp`
  */
-class Response {
+class Response extends Verbose {
 
   /**
    * Response object, created in Request#fetch
    * @param {Object} param
    * @param {Object} param.response
    * @param {Object} param.request
+   * @param {Boolean} param.verbosity
    */
   constructor ({response=null, request=null}={}) {
     Enforce.named(arguments, {response: 'object', request: Namespace.Request}, 'Response#constructor');
+    super();
     this.response = response;
     this.request = request;
 
@@ -712,7 +728,7 @@ class Response {
     if (this.statusCode === 429) {
       const milliseconds = this.x_ratelimit_reset;
       if (milliseconds > 0) {
-        this.verbose && Logger.log('429 rate limit encountered in fetch, sleeping for ' + (milliseconds / 1000) + ' seconds')
+        this.verbosity > 2 && Logger.log('429 rate limit encountered in fetch, sleeping for ' + (milliseconds / 1000) + ' seconds')
         Utilities.sleep(milliseconds);
       }
       return true;
@@ -749,6 +765,7 @@ class Endpoint {
    */
   constructor ({baseUrl=null, oauth=null, discovery={}}={}, {stickyHeaders={}, stickyQuery={}, stickyPayload={}}={}) {
     Enforce.named(arguments, {baseUrl: 'string', oauth: 'any', discovery: 'object', stickyHeaders: 'object', stickyQuery: 'object', stickyPayload: 'object'}, 'Endpoints.constructor');
+    this.verbosity = 0;
     this.disc = null;
     this.baseUrl = baseUrl;
     this.stickyHeaders = stickyHeaders;
@@ -764,6 +781,10 @@ class Endpoint {
     if (this.oauth === 'me') {
       this.oauth = new Oauth();
     }
+  }
+
+  setVerbosity(value) {
+    this.verbosity = value;
   }
 
   /**
@@ -807,7 +828,9 @@ class Endpoint {
     options.oauth = this.oauth;
     mixin.pathParams = pathParams;
 
-    return new Request(options, {mixin});
+    const request = new Request(options, {mixin});
+    if (this.verbosity) request.setVerbosity(this.verbosity);
+    return request;
   }
 
   /**
