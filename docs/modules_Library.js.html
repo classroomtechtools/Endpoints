@@ -279,7 +279,7 @@ for (const response of batch) {
       const delta = now.getTime() - lastTime.getTime();
       if ( delta &lt; oneSecond &amp;&amp; delta > 0 ) {
         const sleep = (oneSecond - delta) * 1.5;
-        this.verbosity > 2 &amp;&amp; Logger.log("Sleeping for " + sleep + " seconds to avoid rate limit of " + this.rateLimit);
+        this.verbosity > 2 &amp;&amp; Logger.log("Sleeping for " + (sleep * 1000) + " seconds to avoid rate limit of " + this.rateLimit);
         Utilities.sleep(sleep);
       }
 
