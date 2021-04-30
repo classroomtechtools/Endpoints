@@ -1,5 +1,6 @@
 import {Enforce} from '@classroomtechtools/enforce_arguments';
 import {OAuth2} from './lib/Oauth2.js';
+import {cloneDeep} from 'lodash-es';
 
 class Verbose {
   constructor () {
@@ -186,8 +187,8 @@ for (const response of batch) {
             now = new Date();
       const delta = now.getTime() - lastTime.getTime();
       if ( delta < oneSecond && delta > 0 ) {
-        const sleep = (oneSecond - delta) * 1.5;
-        this.verbosity > 2 && Logger.log("Sleeping for " + (sleep * 1000) + " seconds to avoid rate limit of " + this.rateLimit);
+        const sleep = (oneSecond - delta) * 1.01;
+        this.verbosity > 2 && Logger.log(`Sleeping for ${sleep * oneSecond} seconds match rate limit of ${this.rateLimit} per second`);
         Utilities.sleep(sleep);
       }
 
@@ -402,11 +403,20 @@ class Request extends Verbose {
     this.payload = payload;
     this.method = method;
     this.query = query;
+    this.store = null;
     // standard parameters is quite useful for performance, use is specially
     this._fields = [];
     this[PRIVATE_OAUTH] = oauth;
 
     if (mixin) Object.assign(this, mixin);
+  }
+
+  /**
+   * Caching store
+   * @param {Any} store - Requires get and put methods
+   */
+  setStore (store) {
+    this.store = store;
   }
 
   /**
@@ -420,11 +430,52 @@ const response = request.fetch();
 Logger.log(response.json);
    */
   fetch () {
+
+    /**
+     * Use the store, if present
+     * @returns ResponseObject
+     */
+
+    const fetcher = (u, o) => {
+      const info = {hash: null};
+      if (this.store != null) {
+        // handle a caching store by getting the hash of the request sans the authorization header
+        // the bearer token may easily change in this context, and wouldn't make caching possible
+        // also not storing the bearer token anywhere, not even a hashed version of it
+        const obj = cloneDeep({url: u}, o);
+        if (obj.headers && obj.headers.Authorization)
+          delete obj.headers.Authorization;
+
+        // the Utilities digest returns an array of bytes (integers) which we need to convert to character strings
+        info.hash = Utilities
+                      .computeDigest( Utilities.DigestAlgorithm.MD5, JSON.stringify(obj) )
+                      .map( chr => ( chr < 0 ? chr + 256 : chr ).toString(16).padStart(2, '0') )
+                      .join('');
+
+        // see if it's in the cache
+        const data = this.store.get(info.hash);
+
+        // if it's in the cache, return an object {data: 'xyz'} which we'll be able to unpack as being in the cache
+        // when we make a response object, which can make a mock object
+        if (data!=null) {
+          return {data};
+        }
+      }
+      const response = UrlFetchApp.fetch(u, o);
+      if (info.hash != null && response.getResponseCode() === 200) {
+        // store the raw text result but only for successful responses
+        const result = this.store.put(info.hash, response.getContentText());
+      }
+      // return the repsonse object
+      return response;
+    };
+
+
     const {url, params: requestObject} = this.url_params({embedUrl: true});
     let response;
     try {
       this.verbosity >= 1 && Logger.log(JSON.stringify({...requestObject, ...{time: new Date()}}, ['url', 'method', 'headers', 'time'], 2));
-      response = UrlFetchApp.fetch(url, requestObject);
+      response = fetcher(url, requestObject);
     } catch (e) {
       response = null;
       throw new Error(e.message, {url, requestObject});
@@ -433,12 +484,14 @@ Logger.log(response.json);
 
     // auto-detect ratelimits, try again
     if (resp.hitRateLimit) {
-      response = UrlFetchApp.fetch(url, requestObject);
+      this.verbosity > 2 && Logger.log("Hit rate limit, trying again");
+      response = fetcher(url, requestObject);
       resp = new Response({response, request: this});
     }
 
     return resp;
   }
+
 
   /**
    * Alternative to this.url
@@ -593,6 +646,24 @@ request.url;  // https://exmaple.com?p=str
 
 
 /**
+ * Returns a ResponseObject or RespondObject-compatible object
+ * this will wrap the data into the getContentText which is used for .json calls
+ */
+const toResponse = (resp) => {
+  const {data} = resp;
+  if (data!=null) {
+    return {
+      getAllHeaders: () => ({'Content-Type': 'text/html; charset=utf-8'}),  // placeholder in case of parse error
+      getHeaders: () => ({'Content-Type': 'text/html; charset=utf-8'}),  // placeholder in case of parse error
+      getContentText: () => data,
+      getResponseCode: () => 200
+    }
+  }
+  return resp;
+}
+
+
+/**
  * Response objects, created on your behalf. Contains both the actual response object returned by `UrlFetchApp` and the params object that was built and sent to `UrlFetchApp`
  */
 class Response extends Verbose {
@@ -607,7 +678,7 @@ class Response extends Verbose {
   constructor ({response=null, request=null}={}) {
     Enforce.named(arguments, {response: 'object', request: Namespace.Request}, 'Response#constructor');
     super();
-    this.response = response;
+    this.response = toResponse(response);
     this.request = request;
 
     // By default, if response cannot be parsed to json we'll send back a json with error information instead of throwing error
@@ -762,9 +833,10 @@ class Endpoint {
    * @param {Object}        [stickies.stickyHeaders] permanent headers for any created requests
    * @param {Object}        [stickies.stickyQuery] permanent queries on any created requests
    * @param {Object}        [stickies.payload] payload for any created requests
+   * @param {Any}           [store=null] caching store, (accepts get and put methods)
    */
-  constructor ({baseUrl=null, oauth=null, discovery={}}={}, {stickyHeaders={}, stickyQuery={}, stickyPayload={}}={}) {
-    Enforce.named(arguments, {baseUrl: 'string', oauth: 'any', discovery: 'object', stickyHeaders: 'object', stickyQuery: 'object', stickyPayload: 'object'}, 'Endpoints.constructor');
+  constructor ({baseUrl=null, oauth=null, discovery={}}={}, {stickyHeaders={}, stickyQuery={}, stickyPayload={}}={}, {store=null}={}) {
+    Enforce.named(arguments, {baseUrl: 'string', oauth: 'any', discovery: 'object', stickyHeaders: 'object', stickyQuery: 'object', stickyPayload: 'object', store: 'any'}, 'Endpoints.constructor');
     this.verbosity = 0;
     this.disc = null;
     this.baseUrl = baseUrl;
@@ -772,6 +844,7 @@ class Endpoint {
     this.stickyQuery = stickyQuery;
     this.stickyPayload = stickyPayload;
     this.oauth = oauth;
+    this.store = store;
     if (Object.keys(discovery).length > 0 && Endpoint.utils.validateDiscovery(discovery)) {
       this.disc = new DiscoveryCache();
       this.baseUrl = Endpoint.utils.translateToTemplate( this.disc.getUrl(discovery) );
@@ -830,6 +903,7 @@ class Endpoint {
 
     const request = new Request(options, {mixin});
     if (this.verbosity) request.setVerbosity(this.verbosity);
+    if (this.store) request.setStore(this.store);
     return request;
   }
 

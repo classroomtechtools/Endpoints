@@ -1,5 +1,7 @@
-import {describe, it, assert} from '@classroomtechtools/unittesting';
+import {UtgsObject} from '@classroomtechtools/unittesting';
 import {Log} from './lib/log.js';
+
+const {describe, it, assert} = UtgsObject;
 
 if (remote) Log();
 
@@ -187,3 +189,34 @@ describe("http get request with no authentication", _ => {
 
 });
 
+describe("non-batch fetch", _ => {
+  it("is cached when store is defined", _ => {
+    const module_ = module();
+    const hash = '8ee76722da4ace8bf34e5183bf0ec2d2';  // derived from generator
+
+    // define store
+    const store = CacheService.getUserCache();
+    const endpoints = new module_({}, {}, {store});
+
+    // regular non-batch call
+    const wpurl = 'https://test.wikipedia.org/w/api.php';
+    const page = 'Albert_Einstein';
+    const req = endpoints.createRequest('get', {url: wpurl});
+    req.addQuery({titles: page});
+
+    // test to ensure it's not there yet:
+    store.remove(hash);
+    assert.null_( {actual: store.get(hash)} );
+
+    // first time will be from the wire
+    const actual = req.fetch().text;
+
+    // test to ensure it's now been put in the cache:
+    assert.notNull( {actual: store.get(hash)} );
+
+    // test to ensure what we got back is in the cache and is the same as from the wire
+    const expected = store.get(hash);
+    assert.equals({actual, expected});
+    assert.null_()
+  });
+});

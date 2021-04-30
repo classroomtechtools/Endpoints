@@ -32,24 +32,25 @@
     "clasp:tests": "clasp run tests"
   },
   "devDependencies": {
-    "@classroomtechtools/unittesting": "^1.5.1",
+    "@classroomtechtools/unittesting": "^2.0.0",
+    "@classroomtechtools/virtualgs": "file:../virtualization",
     "@google/clasp": "^2.3.0",
-    "@rollup/plugin-commonjs": "^12.0.0",
+    "@rollup/plugin-commonjs": "^18.0.0",
     "@rollup/plugin-json": "^4.1.0",
-    "@rollup/plugin-multi-entry": "^3.0.1",
-    "@rollup/plugin-node-resolve": "^8.1.0",
+    "@rollup/plugin-multi-entry": "^4.0.0",
+    "@rollup/plugin-node-resolve": "^11.2.1",
+    "ava": "^3.10.0",
     "npm-run-all": "^4.1.5",
     "rollup": "^2.19.0",
     "rollup-plugin-hypothetical": "^2.1.0",
-    "ava": "^3.10.0",
-    "@classroomtechtools/virtualgs": "file:../virtualization",
-    "sinon": "^9.0.2"
+    "sinon": "^10.0.0"
   },
   "keywords": [
     "google",
     "appscripts"
   ],
   "dependencies": {
-    "@classroomtechtools/enforce_arguments": "^1.0.3"
+    "@classroomtechtools/enforce_arguments": "^1.0.3",
+    "lodash-es": "^4.17.21"
   }
 }
