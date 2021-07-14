@@ -1,136 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="utf-8">
+    <title>JSDoc: Class: Batch</title>
 
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>
-      Batch - Documentation
-  </title>
-
-  <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/highlight.min.js"></script>
-  <script>hljs.initHighlightingOnLoad();</script>
-
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-
-  <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-  <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
-  
-
-  
-
-  <!-- start Mixpanel -->
-  <script type="text/javascript">(function(e,a){if(!a.__SV){var b=window;try{var c,l,i,j=b.location,g=j.hash;c=function(a,b){return(l=a.match(RegExp(b+"=([^&]*)")))?l[1]:null};g&&c(g,"state")&&(i=JSON.parse(decodeURIComponent(c(g,"state"))),"mpeditor"===i.action&&(b.sessionStorage.setItem("_mpcehash",g),history.replaceState(i.desiredHash||"",e.title,j.pathname+j.search)))}catch(m){}var k,h;window.mixpanel=a;a._i=[];a.init=function(b,c,f){function e(b,a){var c=a.split(".");2==c.length&&(b=b[c[0]],a=c[1]);b[a]=function(){b.push([a].concat(Array.prototype.slice.call(arguments,
-  0)))}}var d=a;"undefined"!==typeof f?d=a[f]=[]:f="mixpanel";d.people=d.people||[];d.toString=function(b){var a="mixpanel";"mixpanel"!==f&&(a+="."+f);b||(a+=" (stub)");return a};d.people.toString=function(){return d.toString(1)+".people (stub)"};k="disable time_event track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config reset people.set people.set_once people.increment people.append people.union people.track_charge people.clear_charges people.delete_user".split(" ");
-  for(h=0;h<k.length;h++)e(d,k[h]);a._i.push([b,c,f])};a.__SV=1.2;b=e.createElement("script");b.type="text/javascript";b.async=!0;b.src="undefined"!==typeof MIXPANEL_CUSTOM_LIB_URL?MIXPANEL_CUSTOM_LIB_URL:"file:"===e.location.protocol&&"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//)?"https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js":"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";c=e.getElementsByTagName("script")[0];c.parentNode.insertBefore(b,c)}})(document,window.mixpanel||[]);
-  mixpanel.init("1919205b2da72e4da3b9b6639b444d59");</script>
-  <!-- end Mixpanel -->
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
 </head>
 
 <body>
-  <svg style="display: none;">
-    <defs>
-      <symbol id="linkIcon" fill="#706d77" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0 0h24v24H0z" fill="none"/>
-          <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/>
-      </symbol>
-    </defs>
-  </svg>
 
-  <input type="checkbox" id="nav-trigger" class="nav-trigger" />
-  <label for="nav-trigger" class="navicon-button x">
-    <div class="navicon"></div>
-  </label>
+<div id="main">
 
-  <label for="nav-trigger" class="overlay"></label>
-
-  <div class="top-nav-wrapper">
-    <ul>
-      <li >
-        <a href="index.html">
-          
-            <svg fill="#6D6D6D" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-              <path d="M0 0h24v24H0z" fill="none"/>
-            </svg>
-          
-          
-        </a>
-      </li>
-
-      
-
-    </ul>
-  </div>
-
-  <nav>
-    <h3 class="reference-title">
-      Endpoints by Classroom Tech Tools.
-    </h3>
+    <h1 class="page-title">Class: Batch</h1>
 
     
 
-    <h3>Classes</h3><ul><li id="Batch-nav"><a href="Batch.html">Batch</a><ul class='methods'><li data-type="method" id="Batch-add-nav"><a href="Batch.html#add">add</a></li><li data-type="method" id="Batch-fetchAll-nav"><a href="Batch.html#fetchAll">fetchAll</a></li></ul></li><li id="DiscoveryCache-nav"><a href="DiscoveryCache.html">DiscoveryCache</a></li><li id="Endpoint-nav"><a href="Endpoint.html">Endpoint</a><ul class='methods'><li data-type="method" id="Endpoint-createRequest-nav"><a href="Endpoint.html#createRequest">createRequest</a></li><li data-type="method" id="Endpoint-getBaseUrl-nav"><a href="Endpoint.html#getBaseUrl">getBaseUrl</a></li><li data-type="method" id="Endpoint-httpdelete-nav"><a href="Endpoint.html#httpdelete">httpdelete</a></li><li data-type="method" id="Endpoint-httpget-nav"><a href="Endpoint.html#httpget">httpget</a></li><li data-type="method" id="Endpoint-httppatch-nav"><a href="Endpoint.html#httppatch">httppatch</a></li><li data-type="method" id="Endpoint-httppost-nav"><a href="Endpoint.html#httppost">httppost</a></li><li data-type="method" id="Endpoint-httpput-nav"><a href="Endpoint.html#httpput">httpput</a></li></ul></li><li id="Oauth-nav"><a href="Oauth.html">Oauth</a></li><li id="Request-nav"><a href="Request.html">Request</a><ul class='methods'><li data-type="method" id="Request-addHeader-nav"><a href="Request.html#addHeader">addHeader</a></li><li data-type="method" id="Request-addQuery-nav"><a href="Request.html#addQuery">addQuery</a></li><li data-type="method" id="Request-clearFields-nav"><a href="Request.html#clearFields">clearFields</a></li><li data-type="method" id="Request-clearQuery-nav"><a href="Request.html#clearQuery">clearQuery</a></li><li data-type="method" id="Request-fetch-nav"><a href="Request.html#fetch">fetch</a></li><li data-type="method" id="Request-getParams-nav"><a href="Request.html#getParams">getParams</a></li><li data-type="method" id="Request-getUrl-nav"><a href="Request.html#getUrl">getUrl</a></li><li data-type="method" id="Request-setFields-nav"><a href="Request.html#setFields">setFields</a></li><li data-type="method" id="Request-setStore-nav"><a href="Request.html#setStore">setStore</a></li></ul></li><li id="Response-nav"><a href="Response.html">Response</a><ul class='methods'><li data-type="method" id="Response-getRequest-nav"><a href="Response.html#getRequest">getRequest</a></li><li data-type="method" id="Response-getStatusCode-nav"><a href="Response.html#getStatusCode">getStatusCode</a></li><li data-type="method" id="Response-getText-nav"><a href="Response.html#getText">getText</a></li><li data-type="method" id="Response-isOk-nav"><a href="Response.html#isOk">isOk</a></li></ul></li><li id="Utils-nav"><a href="Utils.html">Utils</a><ul class='methods'><li data-type="method" id="Utils-interpolate-nav"><a href="Utils.html#interpolate">interpolate</a></li><li data-type="method" id="Utils-makeQueryString-nav"><a href="Utils.html#makeQueryString">makeQueryString</a></li><li data-type="method" id="Utils-translateToTemplate-nav"><a href="Utils.html#translateToTemplate">translateToTemplate</a></li></ul></li></ul><h3 id="global-nav">Global</h3><ul><li><a href="global.html#batch">batch</a></li><li><a href="global.html#createGoogEndpoint">createGoogEndpoint</a></li><li><a href="global.html#createGoogEndpointWithOauth">createGoogEndpointWithOauth</a></li><li><a href="global.html#createRequest">createRequest</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#getOauthAsMe">getOauthAsMe</a></li><li><a href="global.html#interpolate">interpolate</a></li><li><a href="global.html#iterator">iterator</a></li><li><a href="global.html#makeGoogOauthService">makeGoogOauthService</a></li><li><a href="global.html#module">module</a></li><li><a href="global.html#post">post</a></li><li><a href="global.html#resolveUrlInterpolation">resolveUrlInterpolation</a></li><li><a href="global.html#toResponse">toResponse</a></li></ul>
-  </nav>
 
-  <div id="main">
-    
-      <h1 class="page-title">
-        Batch
-      </h1>
-    
 
-    
 
 <section>
-  <header>
-    
-      <h2>
-        
-        Batch
-        
-      </h2>
 
-      
-        <div class="class-description">
-          <p>An object that represents a collection of requests that will be asynchronously retrieved. Use <code>add</code> to add request objects, and then <code>fetchAll</code> which interacts with APIs concurrently and return them all. The responses will be in the same order as the requests.</p>
-<p>You can also iterate over this object with <code>for … of</code> syntax, and it does so by chunking the requests, passing back time to the caller to process.</p>
-        </div>
-      
+<header>
     
-  </header>
+        <h2><span class="attribs"><span class="type-signature"></span></span>Batch<span class="signature">(rateLimit<span class="signature-attributes">opt</span>, lastExecutionDate<span class="signature-attributes">opt</span>, verbose<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {<a href="Batch.html">Batch</a>}</span></h2>
+        
+            <div class="class-description"><p>An object that represents a collection of requests that will be asynchronously retrieved. Use <code>add</code> to add request objects, and then <code>fetchAll</code> which interacts with APIs concurrently and return them all. The responses will be in the same order as the requests.</p>
+<p>You can also iterate over this object with <code>for … of</code> syntax, and it does so by chunking the requests, passing back time to the caller to process.</p></div>
+        
+    
+</header>
 
-  <article>
+<article>
     <div class="container-overview">
-      
+    
         
 
-
-  
+    
     <h2>Constructor</h2>
-  
+    
 
-  <span class='name-container'>
-    <a class="link-icon" href="#Batch">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id="Batch">
-      <span class="type-signature"></span>new Batch<span class="signature">(rateLimit<span class="signature-attributes">opt</span>, lastExecutionDate<span class="signature-attributes">opt</span>, verbose<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {<a href="Batch.html">Batch</a>}</span>
-    </h4>
-  </span>
+    
+    <h4 class="name" id="Batch"><span class="type-signature"></span>new Batch<span class="signature">(rateLimit<span class="signature-attributes">opt</span>, lastExecutionDate<span class="signature-attributes">opt</span>, verbose<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {<a href="Batch.html">Batch</a>}</span></h4>
+    
 
-  
+    
 
 
 
-  <div class="description">
+<div class="description">
     <p>Usually created with call to <code>Endpoints.batch</code></p>
-  </div>
+</div>
 
 
 
@@ -138,169 +63,154 @@
 
 
 
-  <h5>Parameters:</h5>
-  
+
+
+    <h5>Parameters:</h5>
+    
 
 <table class="params">
-  <thead>
+    <thead>
     <tr>
-      
+        
         <th>Name</th>
-      
+        
 
-      <th>Type</th>
+        <th>Type</th>
 
-      
+        
         <th>Attributes</th>
-      
+        
 
-      
+        
         <th>Default</th>
-      
+        
 
-      <th class="last">Description</th>
+        <th class="last">Description</th>
     </tr>
-  </thead>
+    </thead>
 
-  <tbody>
-    
-      <tr>
-        
-          <td class="name"><code>rateLimit</code></td>
-        
-
-        <td class="type">
-          
-            
-    <span class="param-type">
-      Number
-    </span>
-
+    <tbody>
     
 
-
-          
-        </td>
-
-        
-          <td class="attributes">
+        <tr>
             
-              &lt;optional><br>
+                <td class="name"><code>rateLimit</code></td>
             
 
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
             
 
             
-          </td>
-        
-
-        
-          <td class="default">
+                <td class="default">
+                
+                    50
+                
+                </td>
             
-              50
-            
-          </td>
-        
 
-        <td class="description last">
-          <p>The maximum number, per second, that the endpoint can take before raising 429. error. (This often applies per IP address)</p>
-          
-        </td>
-      </tr>
-
-    
-      <tr>
-        
-          <td class="name"><code>lastExecutionDate</code></td>
-        
-
-        <td class="type">
-          
-            
-    <span class="param-type">
-      Date
-    </span>
+            <td class="description last"><p>The maximum number, per second, that the endpoint can take before raising 429. error. (This often applies per IP address)</p></td>
+        </tr>
 
     
 
-
-          
-        </td>
-
-        
-          <td class="attributes">
+        <tr>
             
-              &lt;optional><br>
+                <td class="name"><code>lastExecutionDate</code></td>
             
 
+            <td class="type">
+            
+                
+<span class="param-type">Date</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
             
 
             
-          </td>
-        
-
-        
-          <td class="default">
+                <td class="default">
+                
+                    null
+                
+                </td>
             
-              null
-            
-          </td>
-        
 
-        <td class="description last">
-          <p>Uses this as basis for understanding how much longer it has for a second to elapse. In most cases, safest to leave as <code>null</code></p>
-          
-        </td>
-      </tr>
-
-    
-      <tr>
-        
-          <td class="name"><code>verbose</code></td>
-        
-
-        <td class="type">
-          
-            
-    <span class="param-type">
-      Boolean
-    </span>
+            <td class="description last"><p>Uses this as basis for understanding how much longer it has for a second to elapse. In most cases, safest to leave as <code>null</code></p></td>
+        </tr>
 
     
 
-
-          
-        </td>
-
-        
-          <td class="attributes">
+        <tr>
             
-              &lt;optional><br>
+                <td class="name"><code>verbose</code></td>
             
 
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
             
 
             
-          </td>
-        
-
-        
-          <td class="default">
+                <td class="default">
+                
+                    false
+                
+                </td>
             
-              false
-            
-          </td>
-        
 
-        <td class="description last">
-          <p>set to true if you want to see messages indicating when it's sleeping in order to ensure the rate limit isn't exceeded</p>
-          
-        </td>
-      </tr>
+            <td class="description last"><p>set to true if you want to see messages indicating when it's sleeping in order to ensure the rate limit isn't exceeded</p></td>
+        </tr>
 
     
-  </tbody>
+    </tbody>
 </table>
+
 
 
 
@@ -308,46 +218,42 @@
 
 <dl class="details">
 
-  
+    
 
-  
+    
 
-  
+    
 
-  
+    
 
-  
+    
 
-  
+    
 
-  
+    
 
-  
+    
 
-  
+    
 
-  
+    
 
-  
+    
 
-  
+    
 
-  
+    
     <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="modules_Library.js.html">modules/Library.js</a>, <a href="modules_Library.js.html#line50">line 50</a>
-        </li>
-      </ul>
-    </dd>
-  
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="modules_Library.js.html">modules/Library.js</a>, <a href="modules_Library.js.html#line50">line 50</a>
+    </li></ul></dd>
+    
 
-  
+    
 
-  
+    
 
-  
+    
 </dl>
 
 
@@ -362,16 +268,33 @@
 
 
 
-  <div class="example-container">
-    <a class="link-icon" href="#Batch-examples">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h5 id="Batch-examples">Example</h5>
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="Batch.html">Batch</a></span>
+
+
+    </dd>
+</dl>
+
     
 
-  <pre class="prettyprint"><code>// create the object
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>// create the object
 const batch = Endpoints.batch();
 
 // add request objects
@@ -391,10 +314,8 @@ for (const response of batch) {
 }</code></pre>
 
 
-  </div>
 
-
-      
+    
     </div>
 
     
@@ -403,39 +324,33 @@ for (const response of batch) {
 
     
 
-     
-
     
 
     
 
     
-      <h3 class="subsection-title">Methods</h3>
 
-      
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
         
+            
 
+    
 
-  
+    
+    <h4 class="name" id="add"><span class="type-signature"></span>add<span class="signature">(request)</span><span class="type-signature"></span></h4>
+    
 
-  <span class='name-container'>
-    <a class="link-icon" href="#add">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id="add">
-      <span class="type-signature"></span>add<span class="signature">(request)</span><span class="type-signature"></span>
-    </h4>
-  </span>
-
-  
+    
 
 
 
-  <div class="description">
+<div class="description">
     <p>Add request to batch queue</p>
-  </div>
+</div>
 
 
 
@@ -443,106 +358,99 @@ for (const response of batch) {
 
 
 
-  <h5>Parameters:</h5>
-  
+
+
+    <h5>Parameters:</h5>
+    
 
 <table class="params">
-  <thead>
+    <thead>
     <tr>
-      
+        
         <th>Name</th>
-      
+        
 
-      <th>Type</th>
+        <th>Type</th>
 
-      
+        
 
-      
+        
 
-      <th class="last">Description</th>
+        <th class="last">Description</th>
     </tr>
-  </thead>
+    </thead>
 
-  <tbody>
+    <tbody>
     
-      <tr>
-        
-          <td class="name"><code>request</code></td>
-        
 
-        <td class="type">
-          
+        <tr>
             
-    <span class="param-type">
-      <a href="Request.html">Request</a>
-    </span>
+                <td class="name"><code>request</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Request.html">Request</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>An Endpoints.Request object</p></td>
+        </tr>
 
     
-
-
-          
-        </td>
-
-        
-
-        
-
-        <td class="description last">
-          <p>An Endpoints.Request object</p>
-          
-        </td>
-      </tr>
-
-    
-  </tbody>
+    </tbody>
 </table>
 
 
 
 
 
+
 <dl class="details">
 
-  
+    
 
-  
+    
 
-  
+    
 
-  
+    
 
-  
+    
 
-  
+    
 
-  
+    
 
-  
+    
 
-  
+    
 
-  
+    
 
-  
+    
 
-  
+    
 
-  
+    
     <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="modules_Library.js.html">modules/Library.js</a>, <a href="modules_Library.js.html#line85">line 85</a>
-        </li>
-      </ul>
-    </dd>
-  
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="modules_Library.js.html">modules/Library.js</a>, <a href="modules_Library.js.html#line85">line 85</a>
+    </li></ul></dd>
+    
 
-  
+    
 
-  
+    
 
-  
+    
 </dl>
 
 
@@ -558,115 +466,127 @@ for (const response of batch) {
 
 
 
-      
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="fetchAll"><span class="type-signature"></span>fetchAll<span class="signature">()</span><span class="type-signature"> &rarr; {Array.&lt;<a href="Response.html">Response</a>>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Use UrlFetchApp to reach out to the internet. Returns Response objects in same order as requests. You need to use <code>json</code> property to get the data result. Note that Response objects also have <code>request</code> property, which can be used to debug, or rebuild the original request, if necessary. Any mixin classes that are used on request creation will be available on the response object.</p>
+<p>Handles 429 errors smartly. Instead of trying again with all of the requests, its subsequent attempt will only fetch those that had 429. Note that the current algorithm assumes these batch requests are going to the same endpoint. TODO: better algorithm not assuming same endpoint</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="modules_Library.js.html">modules/Library.js</a>, <a href="modules_Library.js.html#line112">line 112</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
         
 
 
-  
-
-  <span class='name-container'>
-    <a class="link-icon" href="#fetchAll">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id="fetchAll">
-      <span class="type-signature"></span>fetchAll<span class="signature">()</span><span class="type-signature"> &rarr; {Array.&lt;<a href="Response.html">Response</a>>}</span>
-    </h4>
-  </span>
-
-  
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Array.&lt;<a href="Response.html">Response</a>></span>
 
 
-
-  <div class="description">
-    <p>Use UrlFetchApp to reach out to the internet. Returns Response objects in same order as requests. You need to use <code>json</code> property to get the data result. Note that Response objects also have <code>request</code> property, which can be used to debug, or rebuild the original request, if necessary. Any mixin classes that are used on request creation will be available on the response object.</p>
-<p>Handles 429 errors smartly. Instead of trying again with all of the requests, its subsequent attempt will only fetch those that had 429. Note that the current algorithm assumes these batch requests are going to the same endpoint. TODO: better algorithm not assuming same endpoint</p>
-  </div>
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="modules_Library.js.html">modules/Library.js</a>, <a href="modules_Library.js.html#line112">line 112</a>
-        </li>
-      </ul>
     </dd>
-  
-
-  
-
-  
-
-  
 </dl>
 
-
-
-
-
-
-
-
-
-
-
-
-
-  <div class="example-container">
-    <a class="link-icon" href="#fetchAll-examples">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h5 id="fetchAll-examples">Examples</h5>
     
 
-  <pre class="prettyprint"><code>// Make list of response jsons
+
+
+
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>// Make list of response jsons
 batch.fetchAll().map(response => response.json);</code></pre>
 
-
-  <pre class="prettyprint"><code>// Make list of original request urls
+    <pre class="prettyprint"><code>// Make list of original request urls
 batch.fetchAll().map(response => response.request.url);</code></pre>
 
-
-  <pre class="prettyprint"><code>// request with mixins
+    <pre class="prettyprint"><code>// request with mixins
 const req = Endpoints.createRequest('get', {}, {
   param: 1
 });
@@ -677,33 +597,33 @@ const response = responses[0];
 Logger.log(response.param);  // 1</code></pre>
 
 
-  </div>
 
-
-      
+        
     
 
     
 
     
-  </article>
+</article>
+
 </section>
 
 
 
 
-  </div>
+</div>
 
-  <br class="clear">
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Batch.html">Batch</a></li><li><a href="DiscoveryCache.html">DiscoveryCache</a></li><li><a href="Endpoint.html">Endpoint</a></li><li><a href="Oauth.html">Oauth</a></li><li><a href="Request.html">Request</a></li><li><a href="Response.html">Response</a></li><li><a href="Utils.html">Utils</a></li></ul><h3>Global</h3><ul><li><a href="global.html#batch">batch</a></li><li><a href="global.html#createGoogEndpoint">createGoogEndpoint</a></li><li><a href="global.html#createGoogEndpointWithOauth">createGoogEndpointWithOauth</a></li><li><a href="global.html#createRequest">createRequest</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#getOauthAsMe">getOauthAsMe</a></li><li><a href="global.html#interpolate">interpolate</a></li><li><a href="global.html#iterator">iterator</a></li><li><a href="global.html#makeGoogOauthService">makeGoogOauthService</a></li><li><a href="global.html#module">module</a></li><li><a href="global.html#post">post</a></li><li><a href="global.html#resolveUrlInterpolation">resolveUrlInterpolation</a></li><li><a href="global.html#toResponse">toResponse</a></li></ul>
+</nav>
 
-  <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a>
-  </footer>
+<br class="clear">
 
-  <script src="scripts/linenumber.js"></script>
-  <script src="scripts/pagelocation.js"></script>
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Wed Jul 14 2021 17:21:09 GMT+0800 (Malaysia Time)
+</footer>
 
-  
-
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
 </body>
 </html>

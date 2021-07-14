@@ -1537,9 +1537,10 @@ function Test_(remote=false) {
       // test to ensure what we got back is in the cache and is the same as from the wire
       const expected = store.get(hash);
       assert.equals({actual, expected});
+      assert.null_();
     });
   });
 
 }());
-try { return Log.get() } catch (e) {}
+try { return Log.get() } catch (e) {} 
 }

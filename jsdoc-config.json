@@ -5,12 +5,11 @@
     "plugins": ["plugins/markdown"],
     "templates": {
         "referenceTitle": "Endpoints by Classroom Tech Tools."
-    },
+     },
     "markdown": {
         "excludeTags": ["author"]
     },
     "opts": {
-        "template": "../jsdoc-template",
         "destination": "./docs"
     }
 }
