@@ -1,108 +1,119 @@
 # Endpoints
 
-A library SDK for Google AppsScripts that makes working with API endpoints a cinch. You can use it as an abstraction of `UrlFetchApp`, or use it to wrap Google APIs that don't have advanced services yet.
+[![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/Naereen/StrapDown.js/blob/master/LICENSE) 
 
-See the [documentation](https://classroomtechtools.github.io/Endpoints/).
 
-## Example Libraries that use Endpoints:
 
-- [Chat Advanced Service](https://github.com/classroomtechtools/chat-adv-service).
+A library SDK for APIs in Google AppsScripts. Think of it as the Advanced Services with Batch Superpowers.
+
+More technically, this library can be used to send http requests via `UrlFetchApp.fetch` or `UrlFetchApp.fetchAll`, interacting with api endpoints in raw form. By bringing it down to a lowest layer on this platform, you get the following benefits:
+
+- All of the options, features, and abilities that are available. No compromises.
+- Ability to batch the requests in bulk. Performance can be signficantly improved and run times lowered.
+
+If you're looking for a way to duck under the `6` minute limit to your scripts, the last bullet point should be particularly interesting.
+
+Trade-offs:
+
+- You have to use the "reference documentation" (of Google or otherwise) in order to use it effectively
+
+However:
+
+- If you're using Google APIs, it uses the discovery service to make this easier; all you need to know is the service `name`, `version`, `resource`, and `method`
 
 ## Quickstart
 
-Install:
+### Add as library
+
+Install by adding this library to your project:
 
 - Library ID: `1WovLPVqVjZxkxkgCNgI3S_A3eDsX3DWOAoetZgRGW1JpGQ_9TK25y7mB`
 
-Use instead of `UrlFetchApp.fetch`:
+### Use direct methods 
+
+You can use a more direct methods that match the http verbs ("get", "post", etc) to build http requests:
 
 ```js
-function myFunction () {
-  // create simple get request with query parameter
-  const json = Endpoints.get('https://example.com', {
-    query: {
-      s: 'searchstring'
-    }
-  });
+// make a get request to https://example.com?s=searchstring:
+const json = Endpoints.get('https://example.com', {
+  query: {
+    s: 'searchstring'
+  }
+});
 
-  // create simple post request with headers and payload
-  const json = Endpoints.post('https://example.com', {
-    payload: {
-      key: 'value'
-    },
-    headers: {
-      'Authorization': 'Basic ' + token;
-    }
-  });
-}
+// make an authenticated post request with headers and payload
+const json = Endpoints.post('https://example.com', {
+  payload: {
+    key: 'value'
+  },
+  headers: {
+    'Authorization': 'Basic ' + token;
+  }
+});
 ```
 
-Use it to interact with Google APIs:
+### Use objects
 
 ```js
-function myFunction () {
-  // creates endpoint with oauth as "me"
-  const endpoint = Endpoints.createGoogEndpoint('sheets', 'v4', 'spreadsheet.values', 'get');
+// creates endpoint with automatic oauth authentication
+// same as the spreadsheets advanced service Spreadsheets.Values
+const endpoint = Endpoints.createGoogEndpoint('sheets', 'v4', 'spreadsheet.values', 'get');
 
-  // use endpoint object to create get or post requests
-  const request = endpoint.httpget({spreadsheetId: '<id>'});
+// now create a Request object, sending <id> for the path parameter 
+const request = endpoint.httpget({spreadsheetId: '<id>'});
 
-  // the request object has fetch method
-  const response = request.fetch();
+// the Request object has fetch method
+const response = request.fetch();
 
-  // the response object has json property
-  Logger.log(response.json);
-}
+// the Response object has json property
+response.json;
 ```
 
-Or use it to programmatically create different kinds of requests:
+Why objects? More flexibility. Apply different query parameters depending on a condition:
 
 ```js
-function myFunction () {
-  const request = Endpoints.createRequest('get', 'https://example.com');
-  if (condition)
-    request.addQuery({s: 'searchstring'});
-  else
-    request.addQuery({p: 'something'});
-}
+const request = Endpoints.createRequest('get', 'https://example.com');
+if (condition)
+  request.addQuery({s: 'searchstring'});
+else
+  request.addQuery({p: 'something else'});
 ```
 
-Or really get into the weeds. Looking at [reference documentation](https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/update), we can derive this:
+Or really get into the weeds. Looking at [reference documentation](https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/update) of how to update values on a Google spreadsheet, we can derive this:
 
 ```js
-function myFunction () {
+// Note, 
+const request = Endpoints.createRequest('put', {
+  url: 'https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}',
+  spreadsheetId: '<id>',
+  range: '<range>'
+}, {
+  query: {
+    valueInputOption, 'USER_ENTERED'
+  },
+  headers: {
+    Authorization: "Bearer " + ScriptApp.getOauthToken()
+  },
+  payload: {
+    'values': [
+      [1, 2, 3]
+    ]
+  }
+});
 
-  // build it more manually "from scratch" with `createRequest`
-  const request = Endpoints.createRequest('put', {
-    url: 'https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}',
-    spreadsheetId: '<id>',
-    range: '<range'
-  }, {
-    query: {
-      valueInputOption, 'USER_ENTERED'
-    },
-    payload: {
-      'values': [
-        [1, 2, 3]
-      ]
-    }
-  });
 
-
-  const json = request.fetch().json;
-}
+const json = request.fetch().json;
 ```
 
-
-## Examples
+## Tutorial
 
 ### Download from Wikipedia
 
-Wikipedia offers a great API to get us started learning how to use this library to make simple requests. 
+Wikipedia offers a great API to get us started learning how to use this library to make simple requests. We can use the documentation. Let's start out by using `.createRequest` method on the library:
 
 ```js
-const wpurl = 'https://test.wikipedia.org/w/api.php';
-const request = Endpoints.createRequest('get', wpurl);
+const url = 'https://test.wikipedia.org/w/api.php';
+const request = Endpoints.createRequest('get', {url});
 ```
 
 The documentation for this API says we have to provide it some standard query parameters, so that there's an `?action=query` and `&format=json` tacked onto the end of the URL, so let's figure out how to add them.
