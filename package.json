@@ -23,7 +23,7 @@
     "rm-artifacts": "rm -fr ./project/*",
     "generate": "run-p generate:*",
     "generate:remote": "cp -r ./src/scripts/* ./build/",
-    "generate:docs": "jsdoc --configure jsdoc-config.json --verbose --readme README.md",
+    "generate-docs": "jsdoc --configure jsdoc-config.json --verbose --readme README.md",
     "clasp:create": "clasp create --rootDir ./build",
     "clasp:login": "clasp login",
     "clasp:logout": "clasp logout",
