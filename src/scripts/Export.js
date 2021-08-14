@@ -1,11 +1,10 @@
 /**
  * Returns the class which can be used to build with UrlFetchApp. Not normally required.
  */
-function module () {
-  const {Namespace} = Import;
+function module() {
+  const { Namespace } = Import;
   return Namespace.Endpoint;
 }
-
 
 /**
  * Create request objects
@@ -21,13 +20,16 @@ function module () {
  * @throws Insufficient parameters if urlObj not built correctly
  * @return {Request}
  */
-function createRequest (name, urlObj, options, mixins={}) {
-  const {Enforce, Namespace} = Import;
-  Enforce.positional(arguments, {name: '!string', urlObj: '!object', options: 'object'});
+function createRequest(name, urlObj, options, mixins = {}) {
+  const { Enforce, Namespace } = Import;
+  Enforce.positional(arguments, {
+    name: "!string",
+    urlObj: "!object",
+    options: "object",
+  });
   const endpoint = new Namespace.Endpoint();
   return endpoint.createRequest(name, urlObj, options, mixins);
 }
-
 
 /**
  * Uses the Discovery API to create an endpoint with oauth already handled
@@ -40,11 +42,10 @@ function createRequest (name, urlObj, options, mixins={}) {
 const endpoint = Endpoints.createEndpointWithDiscoveryAPI('sheets', 'v4', 'spreadsheets', 'get');
 endpoint.createRequest(...);
  */
-function createGoogEndpoint (name, version, resource, method) {
-  const {Enforce, Namespace} = Import;
-  return Namespace.Endpoint.discovery({name, version, resource, method});
+function createGoogEndpoint(name, version, resource, method) {
+  const { Enforce, Namespace } = Import;
+  return Namespace.Endpoint.discovery({ name, version, resource, method });
 }
-
 
 /**
  * Exposes the internal method used to substitute pathParameters objects to baseUrlString
@@ -58,21 +59,20 @@ const result = Endpoints.interpolate("https://example.com/${id}/something/${name
 });
 Logger.log(result);  // https://example.com/12345/something/ClassroomTechTools
  */
-function interpolate (baseUrlString, pathParameters) {
+function interpolate(baseUrlString, pathParameters) {
   /**
    * Exposes the internal method used to substitute pathParameters objects to baseUrlString
    * @example
    * $.interpolate("https://example.com/${id}/something/${name}", {id: "12345", name: "ClassroomTechTools"})
    *   // https://example.com/12345/something/ClasroomTechTools
    */
-  const {Enforce, Namespace} = Import;
-  Enforce.named(arguments, {baseUrlString: '!string', pathParameters: '!object'});
-  return Namespace.Endpoint.utils.interpolate(
-    baseUrlString,
-    pathParameters
-  );
+  const { Enforce, Namespace } = Import;
+  Enforce.named(arguments, {
+    baseUrlString: "!string",
+    pathParameters: "!object",
+  });
+  return Namespace.Endpoint.utils.interpolate(baseUrlString, pathParameters);
 }
-
 
 /**
  * Exposes the internal method used to substitute raw url string returned by the discovery service to baseUrlString
@@ -87,14 +87,13 @@ const result = Endpoints.resolveUrlInterpolation("https://example.com/{id}/somet
 Logger.log(result);  // https://example.com/12345/something/ClassroomTechTools
  */
 function resolveUrlInterpolation(str, pathParameters) {
-  const {Enforce, Namespace} = Import;
-  Enforce.named(arguments, {str: '!string', pathParameters: '!object'});
+  const { Enforce, Namespace } = Import;
+  Enforce.named(arguments, { str: "!string", pathParameters: "!object" });
   return Namespace.Endpoint.utils.interpolate(
     Namespace.Endpoint.utils.translateToTemplate(str),
     pathParameters
   );
 }
-
 
 /**
  * Returns service with oauth, for example for service accounts created on Google console
@@ -105,12 +104,25 @@ function resolveUrlInterpolation(str, pathParameters) {
  * @param {String[]} scopes
  * @return {Oauth}
  */
-function makeGoogOauthService (service, email, privateKey, scopes) {
-  const {Enforce, Namespace} = Import;
-  Enforce.positional(arguments, {service: '!string', email: '!string', privateKey: '!string', scopes: '!array'}, 'makeGoogOauthService');
-  return Namespace.Endpoint.googOauthService({service, email, privateKey, scopes});
+function makeGoogOauthService(service, email, privateKey, scopes) {
+  const { Enforce, Namespace } = Import;
+  Enforce.positional(
+    arguments,
+    {
+      service: "!string",
+      email: "!string",
+      privateKey: "!string",
+      scopes: "!array",
+    },
+    "makeGoogOauthService"
+  );
+  return Namespace.Endpoint.googOauthService({
+    service,
+    email,
+    privateKey,
+    scopes,
+  });
 }
-
 
 /**
  * This creates an endpoint in which has custom oauth information, such as that needed for interacting with service that operates on a service account. The first four parameters need to be available in discovery
@@ -122,12 +134,24 @@ function makeGoogOauthService (service, email, privateKey, scopes) {
  * @param {Oauth} oauth
  * @return {Endpoint}
  */
-function createGoogEndpointWithOauth (name, version, resource, method, oauth) {
-  const {Enforce, Namespace} = Import;
-  Enforce.positional(arguments, {name: '!string', version: '!string', resource: '!string', method: '!string', oauth: 'any'}, 'createGoogEndpointWithOauth');
-  return Namespace.Endpoint.discovery({name, version, resource, method}, {oauth});
+function createGoogEndpointWithOauth(name, version, resource, method, oauth) {
+  const { Enforce, Namespace } = Import;
+  Enforce.positional(
+    arguments,
+    {
+      name: "!string",
+      version: "!string",
+      resource: "!string",
+      method: "!string",
+      oauth: "any",
+    },
+    "createGoogEndpointWithOauth"
+  );
+  return Namespace.Endpoint.discovery(
+    { name, version, resource, method },
+    { oauth }
+  );
 }
-
 
 /**
  * Simple interface for a get request, returns the response. If an error was found, it returns with error property. The parameters follow the same conventions as in UrlFetch.fetch(url, options).
@@ -138,10 +162,9 @@ function createGoogEndpointWithOauth (name, version, resource, method, oauth) {
 const result = Endpoints.get('https://example.com/s', {query: {s: 'searchstr'}});
 Logger.log(result);  {error: {message:'404'}}
  */
-function get (url, options={}) {
-  return createRequest('get', {url}, options).fetch().json;
+function get(url, options = {}) {
+  return createRequest("get", { url }, options).fetch().json;
 }
-
 
 /**
  * Simple interface for a post request, returns the response. If an error was found, it returns with error property. The parameters follow the same conventions as in UrlFetch.fetch(url, options).
@@ -152,10 +175,9 @@ function get (url, options={}) {
 const result = Endpoints.post('https://example.com/s', {payload: {password: 'password'}});
 Logger.log(result);  {error: {message:'404'}}
  */
-function post (url, options={}) {
-  return createRequest('post', {url}, options).fetch().json;
+function post(url, options = {}) {
+  return createRequest("post", { url }, options).fetch().json;
 }
-
 
 /**
  * Returns object on which you can use build batch request. The method {@link Batch#add} can be used to add requests to the queue. The method {@link Batch#fetchAll} is available which returns array of responses. Iteration over the instance is also possible. Rate limitation are either avoided, or handled.
@@ -163,20 +185,31 @@ function post (url, options={}) {
  * @param {Date} [lastExecutionDate=null]
  * @return {Batch}
  */
-function batch (rateLimit=50, lastExecutionDate=null) {
-  const {Namespace} = Import;
-  return new Namespace.Batch({rateLimit, lastExecutionDate});
+function batch(rateLimit = 50, lastExecutionDate = null) {
+  const { Namespace } = Import;
+  return new Namespace.Batch({ rateLimit, lastExecutionDate });
 }
 
 /**
  * Returns a convenient class that has a `token` property which will authenticate requests with "you" via `ScriptApp.getOauthToken`
  */
-function getOauthAsMe () {
-  const {Namespace} = Import;
-  return new Namespace.Oauth()
+function getOauthAsMe() {
+  const { Namespace } = Import;
+  return new Namespace.Oauth();
 }
 
-
 function mocklib_() {
-  return {createGoogEndpoint, batch, post, get, createGoogEndpointWithOauth, makeGoogOauthService, resolveUrlInterpolation, createRequest, interpolate, resolveUrlInterpolation, getOauthAsMe};
+  return {
+    createGoogEndpoint,
+    batch,
+    post,
+    get,
+    createGoogEndpointWithOauth,
+    makeGoogOauthService,
+    resolveUrlInterpolation,
+    createRequest,
+    interpolate,
+    resolveUrlInterpolation,
+    getOauthAsMe,
+  };
 }
