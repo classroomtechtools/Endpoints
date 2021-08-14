@@ -83,7 +83,7 @@ for (const response of batch) {
    * @param {Request} request - An Endpoints.Request object
    */
   add ({request}={}) {
-    Enforce.named(arguments, {request: Namespace.Request}, 'Batch#add');
+    Enforce.named(arguments, {request: Endpoints.Request}, 'Batch#add');
     this.queue.push(request);
   }
 
@@ -269,7 +269,7 @@ class DiscoveryCache {
     }
 
     getUrl ({name, version, resource, method}={}) {
-      const {Namespace} = Import;
+      const {Endpoints} = Import;
       const key = `${name}${version}${resource}${method}`;
       let data = this.cache.get(key);
       let ret = null;
@@ -307,14 +307,14 @@ class DiscoveryCache {
     }
 
     getEndpoint(name, version) {
-      return new Namespace.Endpoint().httpget({url: `https://www.googleapis.com/discovery/v1/apis/${name}/${version}/rest`}).fetch();
+      return new Endpoints.Endpoint().httpget({url: `https://www.googleapis.com/discovery/v1/apis/${name}/${version}/rest`}).fetch();
     }
 
 }
 
 
 /**
- * Class that fills in Endpoint.utils namespace
+ * Class that fills in Endpoint.utils Endpoints
  * provides utility methods used throughout the library, can be exported
  */
 class Utils {
@@ -676,7 +676,7 @@ class Response extends Verbose {
    * @param {Boolean} param.verbosity
    */
   constructor ({response=null, request=null}={}) {
-    Enforce.named(arguments, {response: 'object', request: Namespace.Request}, 'Response#constructor');
+    Enforce.named(arguments, {response: 'object', request: Endpoints.Request}, 'Response#constructor');
     super();
     this.response = toResponse(response);
     this.request = request;
@@ -776,6 +776,10 @@ class Response extends Verbose {
   }
 
   get x_ratelimit_reset () {
+    if (!this.headers.hasOwnProperty('x-ratelimit-reset')) {
+      // no instructions provided on how long to wait, so let's tell it to wait 10 seconds?
+      return 30 * 1000;
+    }
     let header_reset_at = this.headers['x-ratelimit-reset'];
     header_reset_at = header_reset_at.replace(" UTC", "+0000").replace(" ", "T");
     const reset_at = new Date(header_reset_at).getTime();
@@ -1003,5 +1007,5 @@ class Endpoint {
   }
 }
 
-const Namespace = {Endpoint, Response, Batch, Request, Oauth};
-export {Namespace};
+const Endpoints = {Endpoint, Response, Batch, Request, Oauth};
+export {Endpoints, Endpoint};

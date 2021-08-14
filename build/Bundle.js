@@ -1316,14 +1316,20 @@ const OAuth2 = {createService};
 /** Detect free variable `global` from Node.js. */
 var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
 
+var freeGlobal$1 = freeGlobal;
+
 /** Detect free variable `self`. */
 var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
 
 /** Used as a reference to the global object. */
-var root = freeGlobal || freeSelf || Function('return this')();
+var root = freeGlobal$1 || freeSelf || Function('return this')();
+
+var root$1 = root;
 
 /** Built-in value references. */
-var Symbol$1 = root.Symbol;
+var Symbol$1 = root$1.Symbol;
+
+var Symbol$2 = Symbol$1;
 
 /** Used for built-in method references. */
 var objectProto$c = Object.prototype;
@@ -1339,7 +1345,7 @@ var hasOwnProperty$9 = objectProto$c.hasOwnProperty;
 var nativeObjectToString$1 = objectProto$c.toString;
 
 /** Built-in value references. */
-var symToStringTag$1 = Symbol$1 ? Symbol$1.toStringTag : undefined;
+var symToStringTag$1 = Symbol$2 ? Symbol$2.toStringTag : undefined;
 
 /**
  * A specialized version of `baseGetTag` which ignores `Symbol.toStringTag` values.
@@ -1394,7 +1400,7 @@ var nullTag = '[object Null]',
     undefinedTag = '[object Undefined]';
 
 /** Built-in value references. */
-var symToStringTag = Symbol$1 ? Symbol$1.toStringTag : undefined;
+var symToStringTag = Symbol$2 ? Symbol$2.toStringTag : undefined;
 
 /**
  * The base implementation of `getTag` without fallbacks for buggy environments.
@@ -1465,6 +1471,8 @@ function isObjectLike(value) {
  */
 var isArray = Array.isArray;
 
+var isArray$1 = isArray;
+
 /**
  * Checks if `value` is the
  * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
@@ -1529,11 +1537,13 @@ function isFunction(value) {
 }
 
 /** Used to detect overreaching core-js shims. */
-var coreJsData = root['__core-js_shared__'];
+var coreJsData = root$1['__core-js_shared__'];
+
+var coreJsData$1 = coreJsData;
 
 /** Used to detect methods masquerading as native. */
 var maskSrcKey = (function() {
-  var uid = /[^.]+$/.exec(coreJsData && coreJsData.keys && coreJsData.keys.IE_PROTO || '');
+  var uid = /[^.]+$/.exec(coreJsData$1 && coreJsData$1.keys && coreJsData$1.keys.IE_PROTO || '');
   return uid ? ('Symbol(src)_1.' + uid) : '';
 }());
 
@@ -1640,7 +1650,9 @@ function getNative(object, key) {
 }
 
 /* Built-in method references that are verified to be native. */
-var WeakMap = getNative(root, 'WeakMap');
+var WeakMap = getNative(root$1, 'WeakMap');
+
+var WeakMap$1 = WeakMap;
 
 /** Built-in value references. */
 var objectCreate = Object.create;
@@ -1669,6 +1681,8 @@ var baseCreate = (function() {
   };
 }());
 
+var baseCreate$1 = baseCreate;
+
 /**
  * Copies the values of `source` to `array`.
  *
@@ -1695,6 +1709,8 @@ var defineProperty = (function() {
     return func;
   } catch (e) {}
 }());
+
+var defineProperty$1 = defineProperty;
 
 /**
  * A specialized version of `_.forEach` for arrays without support for
@@ -1751,8 +1767,8 @@ function isIndex(value, length) {
  * @param {*} value The value to assign.
  */
 function baseAssignValue(object, key, value) {
-  if (key == '__proto__' && defineProperty) {
-    defineProperty(object, key, {
+  if (key == '__proto__' && defineProperty$1) {
+    defineProperty$1(object, key, {
       'configurable': true,
       'enumerable': true,
       'value': value,
@@ -2004,6 +2020,8 @@ var isArguments = baseIsArguments(function() { return arguments; }()) ? baseIsAr
     !propertyIsEnumerable$1.call(value, 'callee');
 };
 
+var isArguments$1 = isArguments;
+
 /**
  * This method returns `false`.
  *
@@ -2031,7 +2049,7 @@ var freeModule$2 = freeExports$2 && typeof module == 'object' && module && !modu
 var moduleExports$2 = freeModule$2 && freeModule$2.exports === freeExports$2;
 
 /** Built-in value references. */
-var Buffer$1 = moduleExports$2 ? root.Buffer : undefined;
+var Buffer$1 = moduleExports$2 ? root$1.Buffer : undefined;
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
 var nativeIsBuffer = Buffer$1 ? Buffer$1.isBuffer : undefined;
@@ -2054,6 +2072,8 @@ var nativeIsBuffer = Buffer$1 ? Buffer$1.isBuffer : undefined;
  * // => false
  */
 var isBuffer = nativeIsBuffer || stubFalse;
+
+var isBuffer$1 = isBuffer;
 
 /** `Object#toString` result references. */
 var argsTag$1 = '[object Arguments]',
@@ -2133,7 +2153,7 @@ var freeModule$1 = freeExports$1 && typeof module == 'object' && module && !modu
 var moduleExports$1 = freeModule$1 && freeModule$1.exports === freeExports$1;
 
 /** Detect free variable `process` from Node.js. */
-var freeProcess = moduleExports$1 && freeGlobal.process;
+var freeProcess = moduleExports$1 && freeGlobal$1.process;
 
 /** Used to access faster Node.js helpers. */
 var nodeUtil = (function() {
@@ -2150,8 +2170,10 @@ var nodeUtil = (function() {
   } catch (e) {}
 }());
 
+var nodeUtil$1 = nodeUtil;
+
 /* Node.js helper references. */
-var nodeIsTypedArray = nodeUtil && nodeUtil.isTypedArray;
+var nodeIsTypedArray = nodeUtil$1 && nodeUtil$1.isTypedArray;
 
 /**
  * Checks if `value` is classified as a typed array.
@@ -2172,6 +2194,8 @@ var nodeIsTypedArray = nodeUtil && nodeUtil.isTypedArray;
  */
 var isTypedArray = nodeIsTypedArray ? baseUnary(nodeIsTypedArray) : baseIsTypedArray;
 
+var isTypedArray$1 = isTypedArray;
+
 /** Used for built-in method references. */
 var objectProto$6 = Object.prototype;
 
@@ -2187,10 +2211,10 @@ var hasOwnProperty$5 = objectProto$6.hasOwnProperty;
  * @returns {Array} Returns the array of property names.
  */
 function arrayLikeKeys(value, inherited) {
-  var isArr = isArray(value),
-      isArg = !isArr && isArguments(value),
-      isBuff = !isArr && !isArg && isBuffer(value),
-      isType = !isArr && !isArg && !isBuff && isTypedArray(value),
+  var isArr = isArray$1(value),
+      isArg = !isArr && isArguments$1(value),
+      isBuff = !isArr && !isArg && isBuffer$1(value),
+      isType = !isArr && !isArg && !isBuff && isTypedArray$1(value),
       skipIndexes = isArr || isArg || isBuff || isType,
       result = skipIndexes ? baseTimes(value.length, String) : [],
       length = result.length;
@@ -2230,6 +2254,8 @@ function overArg(func, transform) {
 /* Built-in method references for those with the same name as other `lodash` methods. */
 var nativeKeys = overArg(Object.keys, Object);
 
+var nativeKeys$1 = nativeKeys;
+
 /** Used for built-in method references. */
 var objectProto$5 = Object.prototype;
 
@@ -2245,7 +2271,7 @@ var hasOwnProperty$4 = objectProto$5.hasOwnProperty;
  */
 function baseKeys(object) {
   if (!isPrototype(object)) {
-    return nativeKeys(object);
+    return nativeKeys$1(object);
   }
   var result = [];
   for (var key in Object(object)) {
@@ -2365,6 +2391,8 @@ function keysIn(object) {
 /* Built-in method references that are verified to be native. */
 var nativeCreate = getNative(Object, 'create');
 
+var nativeCreate$1 = nativeCreate;
+
 /**
  * Removes all key-value entries from the hash.
  *
@@ -2373,7 +2401,7 @@ var nativeCreate = getNative(Object, 'create');
  * @memberOf Hash
  */
 function hashClear() {
-  this.__data__ = nativeCreate ? nativeCreate(null) : {};
+  this.__data__ = nativeCreate$1 ? nativeCreate$1(null) : {};
   this.size = 0;
 }
 
@@ -2413,7 +2441,7 @@ var hasOwnProperty$2 = objectProto$3.hasOwnProperty;
  */
 function hashGet(key) {
   var data = this.__data__;
-  if (nativeCreate) {
+  if (nativeCreate$1) {
     var result = data[key];
     return result === HASH_UNDEFINED$1 ? undefined : result;
   }
@@ -2437,7 +2465,7 @@ var hasOwnProperty$1 = objectProto$2.hasOwnProperty;
  */
 function hashHas(key) {
   var data = this.__data__;
-  return nativeCreate ? (data[key] !== undefined) : hasOwnProperty$1.call(data, key);
+  return nativeCreate$1 ? (data[key] !== undefined) : hasOwnProperty$1.call(data, key);
 }
 
 /** Used to stand-in for `undefined` hash values. */
@@ -2456,7 +2484,7 @@ var HASH_UNDEFINED = '__lodash_hash_undefined__';
 function hashSet(key, value) {
   var data = this.__data__;
   this.size += this.has(key) ? 0 : 1;
-  data[key] = (nativeCreate && value === undefined) ? HASH_UNDEFINED : value;
+  data[key] = (nativeCreate$1 && value === undefined) ? HASH_UNDEFINED : value;
   return this;
 }
 
@@ -2625,7 +2653,9 @@ ListCache.prototype.has = listCacheHas;
 ListCache.prototype.set = listCacheSet;
 
 /* Built-in method references that are verified to be native. */
-var Map = getNative(root, 'Map');
+var Map = getNative(root$1, 'Map');
+
+var Map$1 = Map;
 
 /**
  * Removes all key-value entries from the map.
@@ -2638,7 +2668,7 @@ function mapCacheClear() {
   this.size = 0;
   this.__data__ = {
     'hash': new Hash,
-    'map': new (Map || ListCache),
+    'map': new (Map$1 || ListCache),
     'string': new Hash
   };
 }
@@ -2779,6 +2809,8 @@ function arrayPush(array, values) {
 /** Built-in value references. */
 var getPrototype = overArg(Object.getPrototypeOf, Object);
 
+var getPrototype$1 = getPrototype;
+
 /**
  * Removes all key-value entries from the stack.
  *
@@ -2851,7 +2883,7 @@ function stackSet(key, value) {
   var data = this.__data__;
   if (data instanceof ListCache) {
     var pairs = data.__data__;
-    if (!Map || (pairs.length < LARGE_ARRAY_SIZE - 1)) {
+    if (!Map$1 || (pairs.length < LARGE_ARRAY_SIZE - 1)) {
       pairs.push([key, value]);
       this.size = ++data.size;
       return this;
@@ -2918,7 +2950,7 @@ var freeModule = freeExports && typeof module == 'object' && module && !module.n
 var moduleExports = freeModule && freeModule.exports === freeExports;
 
 /** Built-in value references. */
-var Buffer = moduleExports ? root.Buffer : undefined,
+var Buffer = moduleExports ? root$1.Buffer : undefined,
     allocUnsafe = Buffer ? Buffer.allocUnsafe : undefined;
 
 /**
@@ -3012,6 +3044,8 @@ var getSymbols = !nativeGetSymbols$1 ? stubArray : function(object) {
   });
 };
 
+var getSymbols$1 = getSymbols;
+
 /**
  * Copies own symbols of `source` to `object`.
  *
@@ -3021,7 +3055,7 @@ var getSymbols = !nativeGetSymbols$1 ? stubArray : function(object) {
  * @returns {Object} Returns `object`.
  */
 function copySymbols(source, object) {
-  return copyObject(source, getSymbols(source), object);
+  return copyObject(source, getSymbols$1(source), object);
 }
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
@@ -3037,11 +3071,13 @@ var nativeGetSymbols = Object.getOwnPropertySymbols;
 var getSymbolsIn = !nativeGetSymbols ? stubArray : function(object) {
   var result = [];
   while (object) {
-    arrayPush(result, getSymbols(object));
-    object = getPrototype(object);
+    arrayPush(result, getSymbols$1(object));
+    object = getPrototype$1(object);
   }
   return result;
 };
+
+var getSymbolsIn$1 = getSymbolsIn;
 
 /**
  * Copies own and inherited symbols of `source` to `object`.
@@ -3052,7 +3088,7 @@ var getSymbolsIn = !nativeGetSymbols ? stubArray : function(object) {
  * @returns {Object} Returns `object`.
  */
 function copySymbolsIn(source, object) {
-  return copyObject(source, getSymbolsIn(source), object);
+  return copyObject(source, getSymbolsIn$1(source), object);
 }
 
 /**
@@ -3068,7 +3104,7 @@ function copySymbolsIn(source, object) {
  */
 function baseGetAllKeys(object, keysFunc, symbolsFunc) {
   var result = keysFunc(object);
-  return isArray(object) ? result : arrayPush(result, symbolsFunc(object));
+  return isArray$1(object) ? result : arrayPush(result, symbolsFunc(object));
 }
 
 /**
@@ -3079,7 +3115,7 @@ function baseGetAllKeys(object, keysFunc, symbolsFunc) {
  * @returns {Array} Returns the array of property names and symbols.
  */
 function getAllKeys(object) {
-  return baseGetAllKeys(object, keys, getSymbols);
+  return baseGetAllKeys(object, keys, getSymbols$1);
 }
 
 /**
@@ -3091,17 +3127,23 @@ function getAllKeys(object) {
  * @returns {Array} Returns the array of property names and symbols.
  */
 function getAllKeysIn(object) {
-  return baseGetAllKeys(object, keysIn, getSymbolsIn);
+  return baseGetAllKeys(object, keysIn, getSymbolsIn$1);
 }
 
 /* Built-in method references that are verified to be native. */
-var DataView = getNative(root, 'DataView');
+var DataView = getNative(root$1, 'DataView');
+
+var DataView$1 = DataView;
 
 /* Built-in method references that are verified to be native. */
-var Promise$1 = getNative(root, 'Promise');
+var Promise$1 = getNative(root$1, 'Promise');
+
+var Promise$2 = Promise$1;
 
 /* Built-in method references that are verified to be native. */
-var Set$1 = getNative(root, 'Set');
+var Set$1 = getNative(root$1, 'Set');
+
+var Set$2 = Set$1;
 
 /** `Object#toString` result references. */
 var mapTag$3 = '[object Map]',
@@ -3113,11 +3155,11 @@ var mapTag$3 = '[object Map]',
 var dataViewTag$2 = '[object DataView]';
 
 /** Used to detect maps, sets, and weakmaps. */
-var dataViewCtorString = toSource(DataView),
-    mapCtorString = toSource(Map),
-    promiseCtorString = toSource(Promise$1),
-    setCtorString = toSource(Set$1),
-    weakMapCtorString = toSource(WeakMap);
+var dataViewCtorString = toSource(DataView$1),
+    mapCtorString = toSource(Map$1),
+    promiseCtorString = toSource(Promise$2),
+    setCtorString = toSource(Set$2),
+    weakMapCtorString = toSource(WeakMap$1);
 
 /**
  * Gets the `toStringTag` of `value`.
@@ -3129,11 +3171,11 @@ var dataViewCtorString = toSource(DataView),
 var getTag = baseGetTag;
 
 // Fallback for data views, maps, sets, and weak maps in IE 11 and promises in Node.js < 6.
-if ((DataView && getTag(new DataView(new ArrayBuffer(1))) != dataViewTag$2) ||
-    (Map && getTag(new Map) != mapTag$3) ||
-    (Promise$1 && getTag(Promise$1.resolve()) != promiseTag) ||
-    (Set$1 && getTag(new Set$1) != setTag$3) ||
-    (WeakMap && getTag(new WeakMap) != weakMapTag$1)) {
+if ((DataView$1 && getTag(new DataView$1(new ArrayBuffer(1))) != dataViewTag$2) ||
+    (Map$1 && getTag(new Map$1) != mapTag$3) ||
+    (Promise$2 && getTag(Promise$2.resolve()) != promiseTag) ||
+    (Set$2 && getTag(new Set$2) != setTag$3) ||
+    (WeakMap$1 && getTag(new WeakMap$1) != weakMapTag$1)) {
   getTag = function(value) {
     var result = baseGetTag(value),
         Ctor = result == objectTag$1 ? value.constructor : undefined,
@@ -3180,7 +3222,9 @@ function initCloneArray(array) {
 }
 
 /** Built-in value references. */
-var Uint8Array = root.Uint8Array;
+var Uint8Array = root$1.Uint8Array;
+
+var Uint8Array$1 = Uint8Array;
 
 /**
  * Creates a clone of `arrayBuffer`.
@@ -3191,7 +3235,7 @@ var Uint8Array = root.Uint8Array;
  */
 function cloneArrayBuffer(arrayBuffer) {
   var result = new arrayBuffer.constructor(arrayBuffer.byteLength);
-  new Uint8Array(result).set(new Uint8Array(arrayBuffer));
+  new Uint8Array$1(result).set(new Uint8Array$1(arrayBuffer));
   return result;
 }
 
@@ -3225,7 +3269,7 @@ function cloneRegExp(regexp) {
 }
 
 /** Used to convert symbols to primitives and strings. */
-var symbolProto = Symbol$1 ? Symbol$1.prototype : undefined,
+var symbolProto = Symbol$2 ? Symbol$2.prototype : undefined,
     symbolValueOf = symbolProto ? symbolProto.valueOf : undefined;
 
 /**
@@ -3331,7 +3375,7 @@ function initCloneByTag(object, tag, isDeep) {
  */
 function initCloneObject(object) {
   return (typeof object.constructor == 'function' && !isPrototype(object))
-    ? baseCreate(getPrototype(object))
+    ? baseCreate$1(getPrototype$1(object))
     : {};
 }
 
@@ -3350,7 +3394,7 @@ function baseIsMap(value) {
 }
 
 /* Node.js helper references. */
-var nodeIsMap = nodeUtil && nodeUtil.isMap;
+var nodeIsMap = nodeUtil$1 && nodeUtil$1.isMap;
 
 /**
  * Checks if `value` is classified as a `Map` object.
@@ -3371,6 +3415,8 @@ var nodeIsMap = nodeUtil && nodeUtil.isMap;
  */
 var isMap = nodeIsMap ? baseUnary(nodeIsMap) : baseIsMap;
 
+var isMap$1 = isMap;
+
 /** `Object#toString` result references. */
 var setTag$1 = '[object Set]';
 
@@ -3386,7 +3432,7 @@ function baseIsSet(value) {
 }
 
 /* Node.js helper references. */
-var nodeIsSet = nodeUtil && nodeUtil.isSet;
+var nodeIsSet = nodeUtil$1 && nodeUtil$1.isSet;
 
 /**
  * Checks if `value` is classified as a `Set` object.
@@ -3406,6 +3452,8 @@ var nodeIsSet = nodeUtil && nodeUtil.isSet;
  * // => false
  */
 var isSet = nodeIsSet ? baseUnary(nodeIsSet) : baseIsSet;
+
+var isSet$1 = isSet;
 
 /** Used to compose bitmasks for cloning. */
 var CLONE_DEEP_FLAG$1 = 1,
@@ -3488,7 +3536,7 @@ function baseClone(value, bitmask, customizer, key, object, stack) {
   if (!isObject(value)) {
     return value;
   }
-  var isArr = isArray(value);
+  var isArr = isArray$1(value);
   if (isArr) {
     result = initCloneArray(value);
     if (!isDeep) {
@@ -3498,7 +3546,7 @@ function baseClone(value, bitmask, customizer, key, object, stack) {
     var tag = getTag$1(value),
         isFunc = tag == funcTag || tag == genTag;
 
-    if (isBuffer(value)) {
+    if (isBuffer$1(value)) {
       return cloneBuffer(value, isDeep);
     }
     if (tag == objectTag || tag == argsTag || (isFunc && !object)) {
@@ -3523,11 +3571,11 @@ function baseClone(value, bitmask, customizer, key, object, stack) {
   }
   stack.set(value, result);
 
-  if (isSet(value)) {
+  if (isSet$1(value)) {
     value.forEach(function(subValue) {
       result.add(baseClone(subValue, bitmask, customizer, subValue, value, stack));
     });
-  } else if (isMap(value)) {
+  } else if (isMap$1(value)) {
     value.forEach(function(subValue, key) {
       result.set(key, baseClone(subValue, bitmask, customizer, key, value, stack));
     });
@@ -3656,7 +3704,7 @@ for (const response of batch) {
    * @param {Request} request - An Endpoints.Request object
    */
   add ({request}={}) {
-    Enforce.named(arguments, {request: Namespace.Request}, 'Batch#add');
+    Enforce.named(arguments, {request: Endpoints.Request}, 'Batch#add');
     this.queue.push(request);
   }
 
@@ -3880,14 +3928,14 @@ class DiscoveryCache {
     }
 
     getEndpoint(name, version) {
-      return new Namespace.Endpoint().httpget({url: `https://www.googleapis.com/discovery/v1/apis/${name}/${version}/rest`}).fetch();
+      return new Endpoints.Endpoint().httpget({url: `https://www.googleapis.com/discovery/v1/apis/${name}/${version}/rest`}).fetch();
     }
 
 }
 
 
 /**
- * Class that fills in Endpoint.utils namespace
+ * Class that fills in Endpoint.utils Endpoints
  * provides utility methods used throughout the library, can be exported
  */
 class Utils {
@@ -4249,7 +4297,7 @@ class Response extends Verbose {
    * @param {Boolean} param.verbosity
    */
   constructor ({response=null, request=null}={}) {
-    Enforce.named(arguments, {response: 'object', request: Namespace.Request}, 'Response#constructor');
+    Enforce.named(arguments, {response: 'object', request: Endpoints.Request}, 'Response#constructor');
     super();
     this.response = toResponse(response);
     this.request = request;
@@ -4349,6 +4397,10 @@ class Response extends Verbose {
   }
 
   get x_ratelimit_reset () {
+    if (!this.headers.hasOwnProperty('x-ratelimit-reset')) {
+      // no instructions provided on how long to wait, so let's tell it to wait 10 seconds?
+      return 30 * 1000;
+    }
     let header_reset_at = this.headers['x-ratelimit-reset'];
     header_reset_at = header_reset_at.replace(" UTC", "+0000").replace(" ", "T");
     const reset_at = new Date(header_reset_at).getTime();
@@ -4576,10 +4628,11 @@ class Endpoint {
   }
 }
 
-const Namespace = {Endpoint, Response, Batch, Request, Oauth};
+const Endpoints = {Endpoint, Response, Batch, Request, Oauth};
 
+exports.Endpoint = Endpoint;
+exports.Endpoints = Endpoints;
 exports.Enforce = Enforce;
-exports.Namespace = Namespace;
 
 })(Import, this);
 try{exports.Import = Import;}catch(e){}
