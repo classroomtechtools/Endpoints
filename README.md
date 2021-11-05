@@ -303,6 +303,82 @@ Finding these names can be tricky, which is why this table can be helpful:
 
 If you, like me, have to spend a few minutes finding them, add a pull request and I'll add it to the table.
 
+### Recipes
+
+Code using endpoints for Oauth2 flow:
+
+```js
+const subdomain = '';
+const domain = '';
+const path = '';  
+
+const Module = Endpoints.module();
+const base = `https://${subdomain}.${domain}/`;
+const oauth = new module({
+  baseUrl: base + "${stub}",
+});
+
+// This will output all the initialization call happening, useful for troubleshooting
+oauth.setVerbosity(3);
+
+const oauthEndpoint = oauth.createRequest(
+  "POST",
+  {
+    stub: "oauth/token", // the token generation endpoint (different depending)
+  },
+  {
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      Authorization:
+        "Basic " + Utilities.base64Encode(clientId + ":" + clientSecret),
+    },
+    payload: {
+      grant_type: "client_credentials",
+    },
+  }
+);
+
+const resp = oauthEndpoint.fetch();
+if (!resp.ok) throw new Error(resp.text);
+
+json = resp.json;
+
+const token = json.access_token;
+const base = `https://${subdomain}.${domain}/${path}/`;
+const endpoint = new Module(
+  {
+    baseUrl: base + "${stub}",
+  },
+  {
+    stickyHeaders: {
+      Authorization: `Bearer ${token}`,  // Will keep auth token on each call
+    },
+    stickyQuery: {
+      count,
+    },
+  }
+);
+
+// 
+endpoint.setVerbosity(3);
+
+// use it:
+
+const request = endpoint.createRequest({
+  stub: "students"
+}, {
+  query: {
+    page: 1,
+  }
+});
+
+const response = request.fetch();
+const json = response.json;
+
+...
+
+```
+
 ## To import as an npm module:
 
 `npm install @classroomtechtools/endpoints`
